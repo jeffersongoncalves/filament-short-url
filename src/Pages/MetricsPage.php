@@ -27,6 +27,8 @@ class MetricsPage extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    protected static ?int $navigationSort = -1;
+
     public function getTitle(): string
     {
         return __('filament-short-url::resources/short-url.metrics.title');
