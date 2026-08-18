@@ -7,6 +7,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\CreateShortUrl;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\EditShortUrl;
@@ -18,6 +19,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 class ShortUrlResource extends Resource
 {
+    use HasPluginNavigationGroup;
+
     protected static ?string $model = ShortUrl::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLink;
@@ -30,11 +33,6 @@ class ShortUrlResource extends Resource
     public static function table(Table $table): Table
     {
         return ShortUrlsTable::configure($table);
-    }
-
-    public static function setNavigationGroup(?string $group): void
-    {
-        static::$navigationGroup = $group;
     }
 
     public static function setNavigationLabel(?string $label): void

@@ -7,6 +7,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\FolderResource\Pages\CreateFolder;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\FolderResource\Pages\EditFolder;
@@ -17,6 +18,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\Folder;
 
 class FolderResource extends Resource
 {
+    use HasPluginNavigationGroup;
+
     protected static ?string $model = Folder::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolder;

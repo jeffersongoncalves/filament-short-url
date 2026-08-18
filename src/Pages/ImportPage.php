@@ -13,6 +13,7 @@ use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Storage;
+use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\LaravelShortUrl\Registries\ImporterDriverRegistry;
 
 /**
@@ -24,9 +25,15 @@ use JeffersonGoncalves\LaravelShortUrl\Registries\ImporterDriverRegistry;
  */
 class ImportPage extends Page
 {
+    use HasPluginNavigationGroup;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpTray;
 
-    public array $data = [];
+    public array $data = [
+        'driver' => null,
+        'file' => null,
+        'source' => null,
+    ];
 
     /** @var array{totalRows: int, sampleRows: array<int, array<string, mixed>>, columns: array<int, string>, warnings: array<int, string>}|null */
     public ?array $preview = null;

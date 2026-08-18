@@ -12,7 +12,7 @@
     @else
         <div class="flex items-center gap-3">
             <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400">
-                <x-heroicon-o-device-phone-mobile class="h-6 w-6" />
+                <x-filament::icon icon="heroicon-o-device-phone-mobile" class="h-6 w-6" />
             </span>
             <div>
                 <p class="font-medium text-gray-950 dark:text-white">{{ $app->label }}</p>

@@ -17,6 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\LaravelShortUrl\Contracts\SettingsRepository;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
@@ -28,6 +29,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
  */
 class SettingsPage extends Page
 {
+    use HasPluginNavigationGroup;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     public array $data = [];

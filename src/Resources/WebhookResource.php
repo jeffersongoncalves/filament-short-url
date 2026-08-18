@@ -7,6 +7,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource\Pages\CreateWebhook;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource\Pages\EditWebhook;
@@ -17,6 +18,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\Webhook;
 
 class WebhookResource extends Resource
 {
+    use HasPluginNavigationGroup;
+
     protected static ?string $model = Webhook::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBolt;

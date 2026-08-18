@@ -7,6 +7,7 @@ use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\ImportPage;
+use JeffersonGoncalves\Filament\ShortUrl\Pages\MetricsPage;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\SettingsPage;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ApiKeyResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\BioPageResource;
@@ -16,13 +17,6 @@ use JeffersonGoncalves\Filament\ShortUrl\Resources\PixelResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource;
-use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
-use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalCampaignBreakdown;
-use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalMediumBreakdown;
-use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalOverview;
-use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalSourceBreakdown;
-use JeffersonGoncalves\Filament\ShortUrl\Widgets\TopLinks;
-use JeffersonGoncalves\Filament\ShortUrl\Widgets\UsageOverview;
 
 class FilamentShortUrlPlugin implements Plugin
 {
@@ -61,10 +55,6 @@ class FilamentShortUrlPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        if ($this->navigationGroup !== null) {
-            ShortUrlResource::setNavigationGroup($this->navigationGroup);
-        }
-
         if ($this->navigationLabel !== null) {
             ShortUrlResource::setNavigationLabel($this->navigationLabel);
         }
@@ -87,21 +77,14 @@ class FilamentShortUrlPlugin implements Plugin
             },
         ));
 
-        $panel->resources($resources);
-        $panel->pages([SettingsPage::class, ImportPage::class]);
+        $pages = [SettingsPage::class, ImportPage::class];
 
         if (! $this->statisticsHidden) {
-            $panel->widgets([
-                GlobalOverview::class,
-                TopLinks::class,
-                ExpiringLinks::class,
-                GlobalMediumBreakdown::class,
-                GlobalSourceBreakdown::class,
-                GlobalCampaignBreakdown::class,
-            ]);
+            $pages[] = MetricsPage::class;
         }
 
-        $panel->widgets([UsageOverview::class]);
+        $panel->resources($resources);
+        $panel->pages($pages);
     }
 
     public function boot(Panel $panel): void {}
@@ -134,6 +117,11 @@ class FilamentShortUrlPlugin implements Plugin
         $this->navigationGroup = $group;
 
         return $this;
+    }
+
+    public function getNavigationGroup(): ?string
+    {
+        return $this->navigationGroup ?? __('filament-short-url::resources/short-url.navigation.group');
     }
 
     public function navigationLabel(?string $label): static

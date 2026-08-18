@@ -1,6 +1,7 @@
 <?php
 
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
+use JeffersonGoncalves\Filament\ShortUrl\Pages\MetricsPage;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Statistics;
 use JeffersonGoncalves\Filament\ShortUrl\Tests\Factories\UserFactory;
@@ -48,7 +49,7 @@ it('can render the statistics page for a short url', function () {
         ->assertSuccessful();
 });
 
-it('hides the statistics row action and dashboard widgets when hideStatistics is enabled', function () {
+it('hides the statistics row action and metrics page when hideStatistics is enabled', function () {
     FilamentShortUrlPlugin::get()->hideStatistics();
 
     $shortUrl = ShortUrl::factory()->create();
@@ -56,7 +57,15 @@ it('hides the statistics row action and dashboard widgets when hideStatistics is
     livewire(ListShortUrls::class)
         ->assertTableActionHidden('statistics', $shortUrl);
 
+    expect(MetricsPage::canAccess())->toBeFalse();
+
     FilamentShortUrlPlugin::get()->hideStatistics(false);
+});
+
+it('can render the dedicated metrics page', function () {
+    ShortUrl::factory()->create(['expires_at' => now()->addDays(3)]);
+
+    livewire(MetricsPage::class)->assertSuccessful();
 });
 
 it('renders the dashboard widgets', function () {

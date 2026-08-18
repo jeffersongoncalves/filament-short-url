@@ -7,6 +7,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\CustomDomainResource\Pages\CreateCustomDomain;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\CustomDomainResource\Pages\EditCustomDomain;
@@ -17,6 +18,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\CustomDomain;
 
 class CustomDomainResource extends Resource
 {
+    use HasPluginNavigationGroup;
+
     protected static ?string $model = CustomDomain::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;

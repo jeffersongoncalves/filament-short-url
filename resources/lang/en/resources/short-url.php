@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'navigation' => [
+        'group' => 'Short URL',
+    ],
+    'metrics' => [
+        'title' => 'Metrics',
+    ],
     'fields' => [
         'destination_url' => 'Destination URL',
         'url_key' => 'Short Key',

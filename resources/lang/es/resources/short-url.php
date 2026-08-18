@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'navigation' => [
+        'group' => 'Enlace Corto',
+    ],
+    'metrics' => [
+        'title' => 'Métricas',
+    ],
     'fields' => [
         'destination_url' => 'URL de Destino',
         'url_key' => 'Clave Corta',

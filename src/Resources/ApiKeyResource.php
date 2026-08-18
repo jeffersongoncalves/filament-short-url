@@ -7,6 +7,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ApiKeyResource\Pages\CreateApiKey;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ApiKeyResource\Pages\EditApiKey;
@@ -17,6 +18,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\ApiKey;
 
 class ApiKeyResource extends Resource
 {
+    use HasPluginNavigationGroup;
+
     protected static ?string $model = ApiKey::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
