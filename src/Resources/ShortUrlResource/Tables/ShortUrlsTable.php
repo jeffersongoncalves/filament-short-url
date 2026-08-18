@@ -3,20 +3,31 @@
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Tables;
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
+use JeffersonGoncalves\LaravelShortUrl\Models\Folder;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
+use JeffersonGoncalves\LaravelShortUrl\Models\Tag;
 
 class ShortUrlsTable
 {
@@ -93,29 +104,144 @@ class ShortUrlsTable
                     ->query(fn (Builder $query, array $data): Builder => $query
                         ->when($data['created_from'] ?? null, fn (Builder $q, string $date): Builder => $q->whereDate('created_at', '>=', $date))
                         ->when($data['created_until'] ?? null, fn (Builder $q, string $date): Builder => $q->whereDate('created_at', '<=', $date))),
+
+                SelectFilter::make('folder_id')
+                    ->label(__('filament-short-url::resources/short-url.filters.folder'))
+                    ->options(fn (): array => Folder::query()->pluck('name', 'id')->all()),
+
+                SelectFilter::make('tags')
+                    ->label(__('filament-short-url::resources/short-url.filters.tags'))
+                    ->relationship('tags', 'name')
+                    ->multiple(),
+
+                TernaryFilter::make('archived')
+                    ->label(__('filament-short-url::resources/short-url.filters.archived'))
+                    ->queries(
+                        true: static::archivedQuery(...),
+                        false: static::notArchivedQuery(...),
+                    ),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    BulkAction::make('enable')
+                        ->label(__('filament-short-url::resources/short-url.bulk.enable'))
+                        ->icon('heroicon-o-check-circle')
+                        ->action(fn (Collection $records) => $records->toQuery()->update(['is_enabled' => true]))
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('disable')
+                        ->label(__('filament-short-url::resources/short-url.bulk.disable'))
+                        ->icon('heroicon-o-x-circle')
+                        ->action(fn (Collection $records) => $records->toQuery()->update(['is_enabled' => false]))
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('archive')
+                        ->label(__('filament-short-url::resources/short-url.bulk.archive'))
+                        ->icon('heroicon-o-archive-box')
+                        ->action(fn (Collection $records) => $records->toQuery()->update(['archived_at' => now()]))
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('unarchive')
+                        ->label(__('filament-short-url::resources/short-url.bulk.unarchive'))
+                        ->icon('heroicon-o-archive-box-x-mark')
+                        ->action(fn (Collection $records) => $records->toQuery()->update(['archived_at' => null]))
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('move_to_folder')
+                        ->label(__('filament-short-url::resources/short-url.bulk.move_to_folder'))
+                        ->icon('heroicon-o-folder-arrow-down')
+                        ->schema([
+                            Select::make('folder_id')
+                                ->label(__('filament-short-url::resources/folder.fields.parent'))
+                                ->options(fn (): array => Folder::query()->pluck('name', 'id')->all())
+                                ->searchable(),
+                        ])
+                        ->action(fn (Collection $records, array $data) => $records->toQuery()->update(['folder_id' => $data['folder_id']]))
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('apply_tags')
+                        ->label(__('filament-short-url::resources/short-url.bulk.apply_tags'))
+                        ->icon('heroicon-o-tag')
+                        ->schema([
+                            CheckboxList::make('tag_ids')
+                                ->label(__('filament-short-url::resources/tag.fields.name'))
+                                ->options(fn (): array => Tag::query()->pluck('name', 'id')->all()),
+                        ])
+                        ->action(static::applyTagsToRecords(...))
+                        ->deselectRecordsAfterCompletion(),
+
+                    DeleteBulkAction::make(),
+                ]),
             ])
             ->recordActions([
-                Action::make('statistics')
-                    ->label(__('filament-short-url::resources/short-url.actions.statistics'))
-                    ->icon('heroicon-o-chart-bar')
-                    ->color('gray')
-                    ->visible(! $statisticsHidden)
-                    ->keyBindings(['s'])
-                    ->url(fn (ShortUrl $record): string => ShortUrlResource::getUrl('statistics', ['record' => $record])),
-                Action::make('qr')
-                    ->label(__('filament-short-url::resources/short-url.actions.qr'))
-                    ->icon('heroicon-o-qr-code')
-                    ->color('gray')
-                    ->keyBindings(['q'])
-                    ->modalHeading(__('filament-short-url::resources/short-url.actions.qr'))
-                    ->modalContent(fn (ShortUrl $record) => view('filament-short-url::components.qr-download', [
-                        'record' => $record,
-                    ]))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel(__('filament-short-url::resources/custom-domain.actions.close')),
-                EditAction::make()
-                    ->keyBindings(['e']),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    Action::make('statistics')
+                        ->label(__('filament-short-url::resources/short-url.actions.statistics').' (S)')
+                        ->icon('heroicon-o-chart-bar')
+                        ->visible(! $statisticsHidden)
+                        ->keyBindings(['s'])
+                        ->url(fn (ShortUrl $record): string => ShortUrlResource::getUrl('statistics', ['record' => $record])),
+                    Action::make('qr')
+                        ->label(__('filament-short-url::resources/short-url.actions.qr').' (Q)')
+                        ->icon('heroicon-o-qr-code')
+                        ->keyBindings(['q'])
+                        ->modalHeading(__('filament-short-url::resources/short-url.actions.qr'))
+                        ->modalContent(fn (ShortUrl $record) => view('filament-short-url::components.qr-download', [
+                            'record' => $record,
+                        ]))
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel(__('filament-short-url::resources/custom-domain.actions.close')),
+                    Action::make('copy')
+                        ->label(__('filament-short-url::resources/short-url.actions.copy').' (I)')
+                        ->icon('heroicon-o-clipboard-document')
+                        ->keyBindings(['i'])
+                        ->extraAttributes(fn (ShortUrl $record): array => [
+                            'x-on:click' => 'navigator.clipboard.writeText('.json_encode($record->fullUrl()).')',
+                        ])
+                        ->action(function (): void {
+                            Notification::make()
+                                ->title(__('filament-short-url::resources/short-url.actions.copied'))
+                                ->success()
+                                ->send();
+                        }),
+                    EditAction::make()
+                        ->label(__('filament-short-url::resources/short-url.actions.edit').' (E)')
+                        ->keyBindings(['e']),
+                    DeleteAction::make()
+                        ->label(__('filament-short-url::resources/short-url.actions.delete').' (X)')
+                        ->keyBindings(['x']),
+                ])
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->color('gray'),
             ]);
+    }
+
+    /**
+     * @param  Builder<ShortUrl>  $query
+     * @return Builder<ShortUrl>
+     */
+    protected static function archivedQuery(Builder $query): Builder
+    {
+        return $query->archived();
+    }
+
+    /**
+     * @param  Builder<ShortUrl>  $query
+     * @return Builder<ShortUrl>
+     */
+    protected static function notArchivedQuery(Builder $query): Builder
+    {
+        return $query->notArchived();
+    }
+
+    /**
+     * @param  Collection<int, ShortUrl>  $records
+     * @param  array<string, mixed>  $data
+     */
+    protected static function applyTagsToRecords(Collection $records, array $data): void
+    {
+        foreach ($records as $record) {
+            $record->tags()->syncWithoutDetaching($data['tag_ids'] ?? []);
+        }
     }
 }

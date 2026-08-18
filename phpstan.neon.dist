@@ -10,7 +10,7 @@ parameters:
     checkModelProperties: false
     ignoreErrors:
         -
-            message: '#Parameter \#1 \$view of .+ expects view-string\|null, string given#'
+            message: '#Parameter \#1 \$view of .+ expects view-string(\|null)?, string given#'
             reportUnmatched: false
         -
             message: '#does not accept default value of type string#'

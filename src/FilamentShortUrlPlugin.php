@@ -6,11 +6,14 @@ use BackedEnum;
 use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use JeffersonGoncalves\Filament\ShortUrl\Pages\ImportPage;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\SettingsPage;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ApiKeyResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\CustomDomainResource;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\FolderResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\PixelResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalOverview;
@@ -25,6 +28,8 @@ class FilamentShortUrlPlugin implements Plugin
         ApiKeyResource::class,
         WebhookResource::class,
         PixelResource::class,
+        FolderResource::class,
+        TagResource::class,
     ];
 
     protected ?string $navigationGroup = null;
@@ -76,7 +81,7 @@ class FilamentShortUrlPlugin implements Plugin
         ));
 
         $panel->resources($resources);
-        $panel->pages([SettingsPage::class]);
+        $panel->pages([SettingsPage::class, ImportPage::class]);
 
         if (! $this->statisticsHidden) {
             $panel->widgets([

@@ -79,10 +79,26 @@ return [
     'filters' => [
         'created_from' => 'Created From',
         'created_until' => 'Created Until',
+        'folder' => 'Folder',
+        'tags' => 'Tags',
+        'archived' => 'Archived',
+    ],
+    'bulk' => [
+        'enable' => 'Enable',
+        'disable' => 'Disable',
+        'archive' => 'Archive',
+        'unarchive' => 'Unarchive',
+        'move_to_folder' => 'Move to Folder',
+        'apply_tags' => 'Apply Tags',
     ],
     'actions' => [
         'statistics' => 'Statistics',
         'qr' => 'QR Code',
+        'copy' => 'Copy Link',
+        'copied' => 'Link copied to clipboard.',
+        'edit' => 'Edit',
+        'delete' => 'Delete',
+        'export' => 'Export CSV',
     ],
     'qr' => [
         'section' => 'QR Code Design',
@@ -117,6 +133,15 @@ return [
     'pixels' => [
         'section' => 'Pixels',
         'field' => 'Attached Pixels',
+    ],
+    'utm' => [
+        'section' => 'UTM Parameters',
+        'template' => 'Apply Template',
+        'source' => 'Source',
+        'medium' => 'Medium',
+        'campaign' => 'Campaign',
+        'term' => 'Term',
+        'content' => 'Content',
     ],
     'stats' => [
         'total_visits' => 'Total Visits',

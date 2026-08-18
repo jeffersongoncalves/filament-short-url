@@ -11,11 +11,13 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Unique;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\QrDesigner;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\RuleBuilder;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\SplitSlider;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\UtmBuilder;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 class ShortUrlForm
@@ -29,6 +31,19 @@ class ShortUrlForm
                 ->url()
                 ->maxLength(65535)
                 ->live(onBlur: true)
+                ->afterStateUpdated(function (?string $state, Set $set): void {
+                    if (! $state || ! filter_var($state, FILTER_VALIDATE_URL)) {
+                        return;
+                    }
+
+                    parse_str(parse_url($state, PHP_URL_QUERY) ?? '', $query);
+
+                    foreach (['source', 'medium', 'campaign', 'term', 'content'] as $field) {
+                        if (isset($query["utm_{$field}"])) {
+                            $set("utm_{$field}", $query["utm_{$field}"]);
+                        }
+                    }
+                })
                 ->columnSpanFull(),
 
             TextInput::make('url_key')
@@ -182,6 +197,13 @@ class ShortUrlForm
                         ->view('filament-short-url::components.deep-link-preview', fn (Get $get): array => [
                             'destinationUrl' => $get('destination_url'),
                         ]),
+                ]),
+
+            Section::make(__('filament-short-url::resources/short-url.utm.section'))
+                ->columnSpanFull()
+                ->collapsed()
+                ->schema([
+                    UtmBuilder::make(),
                 ]),
 
             Section::make(__('filament-short-url::resources/short-url.pixels.section'))

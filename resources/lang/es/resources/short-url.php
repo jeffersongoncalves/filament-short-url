@@ -79,10 +79,26 @@ return [
     'filters' => [
         'created_from' => 'Creado Desde',
         'created_until' => 'Creado Hasta',
+        'folder' => 'Carpeta',
+        'tags' => 'Etiquetas',
+        'archived' => 'Archivado',
+    ],
+    'bulk' => [
+        'enable' => 'Activar',
+        'disable' => 'Desactivar',
+        'archive' => 'Archivar',
+        'unarchive' => 'Desarchivar',
+        'move_to_folder' => 'Mover a Carpeta',
+        'apply_tags' => 'Aplicar Etiquetas',
     ],
     'actions' => [
         'statistics' => 'Estadísticas',
         'qr' => 'Código QR',
+        'copy' => 'Copiar Enlace',
+        'copied' => 'Enlace copiado al portapapeles.',
+        'edit' => 'Editar',
+        'delete' => 'Eliminar',
+        'export' => 'Exportar CSV',
     ],
     'qr' => [
         'section' => 'Diseño del Código QR',
@@ -117,6 +133,15 @@ return [
     'pixels' => [
         'section' => 'Pixels',
         'field' => 'Pixels Adjuntos',
+    ],
+    'utm' => [
+        'section' => 'Parámetros UTM',
+        'template' => 'Aplicar Plantilla',
+        'source' => 'Origen',
+        'medium' => 'Medio',
+        'campaign' => 'Campaña',
+        'term' => 'Término',
+        'content' => 'Contenido',
     ],
     'stats' => [
         'total_visits' => 'Total de Visitas',
