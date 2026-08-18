@@ -214,5 +214,8 @@ return [
         'total_qr_scans' => 'Total QR Scans',
         'top_links' => 'Top 10 Links',
         'expiring_links' => 'Expiring in 7 Days',
+        'by_medium' => 'Traffic by Medium (30d)',
+        'by_source' => 'Traffic by Source (30d)',
+        'by_campaign' => 'Traffic by Campaign (30d)',
     ],
 ];

@@ -17,7 +17,10 @@ use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
+use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalCampaignBreakdown;
+use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalMediumBreakdown;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalOverview;
+use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalSourceBreakdown;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\TopLinks;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\UsageOverview;
 
@@ -92,6 +95,9 @@ class FilamentShortUrlPlugin implements Plugin
                 GlobalOverview::class,
                 TopLinks::class,
                 ExpiringLinks::class,
+                GlobalMediumBreakdown::class,
+                GlobalSourceBreakdown::class,
+                GlobalCampaignBreakdown::class,
             ]);
         }
 

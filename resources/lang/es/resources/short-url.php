@@ -214,5 +214,8 @@ return [
         'total_qr_scans' => 'Total de Escaneos QR',
         'top_links' => 'Top 10 Enlaces',
         'expiring_links' => 'Expirando en 7 Días',
+        'by_medium' => 'Tráfico por Medio (30d)',
+        'by_source' => 'Tráfico por Origen (30d)',
+        'by_campaign' => 'Tráfico por Campaña (30d)',
     ],
 ];
