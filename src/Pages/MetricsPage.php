@@ -27,7 +27,10 @@ class MetricsPage extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
-    protected static ?int $navigationSort = -1;
+    // Filament's own default for an unsorted nav item is -1 (see
+    // NavigationItem::getSort()), so -1 here would just tie with every
+    // other unsorted resource/page and fall back to registration order.
+    protected static ?int $navigationSort = -100;
 
     public function getTitle(): string
     {
