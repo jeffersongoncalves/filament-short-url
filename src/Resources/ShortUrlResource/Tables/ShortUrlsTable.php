@@ -102,6 +102,17 @@ class ShortUrlsTable
                     ->visible(! $statisticsHidden)
                     ->keyBindings(['s'])
                     ->url(fn (ShortUrl $record): string => ShortUrlResource::getUrl('statistics', ['record' => $record])),
+                Action::make('qr')
+                    ->label(__('filament-short-url::resources/short-url.actions.qr'))
+                    ->icon('heroicon-o-qr-code')
+                    ->color('gray')
+                    ->keyBindings(['q'])
+                    ->modalHeading(__('filament-short-url::resources/short-url.actions.qr'))
+                    ->modalContent(fn (ShortUrl $record) => view('filament-short-url::components.qr-download', [
+                        'record' => $record,
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel(__('filament-short-url::resources/custom-domain.actions.close')),
                 EditAction::make()
                     ->keyBindings(['e']),
                 DeleteAction::make(),

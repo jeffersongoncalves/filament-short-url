@@ -2,15 +2,18 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Schemas;
 
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Unique;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\QrDesigner;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\RuleBuilder;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\SplitSlider;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
@@ -25,6 +28,7 @@ class ShortUrlForm
                 ->required()
                 ->url()
                 ->maxLength(65535)
+                ->live(onBlur: true)
                 ->columnSpanFull(),
 
             TextInput::make('url_key')
@@ -150,6 +154,43 @@ class ShortUrlForm
                     Toggle::make('track_device_type')->label(__('filament-short-url::resources/short-url.tracking.track_device_type'))->default(true),
                     Toggle::make('track_referer_url')->label(__('filament-short-url::resources/short-url.tracking.track_referer_url'))->default(true),
                     Toggle::make('track_browser_language')->label(__('filament-short-url::resources/short-url.tracking.track_browser_language'))->default(true),
+                ]),
+
+            Section::make(__('filament-short-url::resources/short-url.qr.section'))
+                ->columnSpanFull()
+                ->collapsed()
+                ->schema([
+                    QrDesigner::make('qr_design'),
+                ]),
+
+            Section::make(__('filament-short-url::resources/short-url.deep_link.section'))
+                ->columnSpanFull()
+                ->columns(2)
+                ->schema([
+                    Toggle::make('auto_open_app_mobile')
+                        ->label(__('filament-short-url::resources/short-url.deep_link.auto_open'))
+                        ->default(false),
+
+                    TextInput::make('app_scheme_override')
+                        ->label(__('filament-short-url::resources/short-url.deep_link.scheme_override'))
+                        ->helperText(__('filament-short-url::resources/short-url.deep_link.scheme_override_helper')),
+
+                    ViewField::make('deep_link_preview')
+                        ->label(__('filament-short-url::resources/short-url.deep_link.matched_app'))
+                        ->dehydrated(false)
+                        ->columnSpanFull()
+                        ->view('filament-short-url::components.deep-link-preview', fn (Get $get): array => [
+                            'destinationUrl' => $get('destination_url'),
+                        ]),
+                ]),
+
+            Section::make(__('filament-short-url::resources/short-url.pixels.section'))
+                ->columnSpanFull()
+                ->schema([
+                    CheckboxList::make('pixels')
+                        ->label(__('filament-short-url::resources/short-url.pixels.field'))
+                        ->relationship('pixels', 'name')
+                        ->columns(2),
                 ]),
         ]);
     }

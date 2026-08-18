@@ -9,6 +9,7 @@ use Filament\Panel;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\SettingsPage;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ApiKeyResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\CustomDomainResource;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\PixelResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
@@ -23,6 +24,7 @@ class FilamentShortUrlPlugin implements Plugin
         CustomDomainResource::class,
         ApiKeyResource::class,
         WebhookResource::class,
+        PixelResource::class,
     ];
 
     protected ?string $navigationGroup = null;
