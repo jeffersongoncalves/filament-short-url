@@ -91,6 +91,7 @@ abstract class TestCase extends Orchestra
         $app['config']->set('short-url.route.domain', 'short.test');
         $app['config']->set('short-url.domains.enabled', true);
         $app['config']->set('short-url.api.enabled', true);
+        $app['config']->set('short-url.bio.enabled', true);
     }
 
     protected function defineDatabaseMigrations(): void

@@ -198,6 +198,11 @@ return [
         'track_referer_url' => 'Track Referrer URL',
         'track_browser_language' => 'Track Browser Language',
     ],
+    'usage' => [
+        'links_this_month' => 'Links This Month',
+        'domains' => 'Domains',
+        'plan' => 'Plan',
+    ],
     'dashboard' => [
         'total_links' => 'Total Links',
         'total_visits' => 'Total Visits',

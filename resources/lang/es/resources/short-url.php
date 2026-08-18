@@ -198,6 +198,11 @@ return [
         'track_referer_url' => 'Rastrear URL de Referencia',
         'track_browser_language' => 'Rastrear Idioma del Navegador',
     ],
+    'usage' => [
+        'links_this_month' => 'Enlaces Este Mes',
+        'domains' => 'Dominios',
+        'plan' => 'Plan',
+    ],
     'dashboard' => [
         'total_links' => 'Total de Enlaces',
         'total_visits' => 'Total de Visitas',

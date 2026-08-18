@@ -9,6 +9,7 @@ use Filament\Panel;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\ImportPage;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\SettingsPage;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ApiKeyResource;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\BioPageResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\CustomDomainResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\FolderResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\PixelResource;
@@ -18,6 +19,7 @@ use JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalOverview;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\TopLinks;
+use JeffersonGoncalves\Filament\ShortUrl\Widgets\UsageOverview;
 
 class FilamentShortUrlPlugin implements Plugin
 {
@@ -30,6 +32,7 @@ class FilamentShortUrlPlugin implements Plugin
         PixelResource::class,
         FolderResource::class,
         TagResource::class,
+        BioPageResource::class,
     ];
 
     protected ?string $navigationGroup = null;
@@ -76,6 +79,7 @@ class FilamentShortUrlPlugin implements Plugin
             fn (string $resource): bool => match ($resource) {
                 CustomDomainResource::class => (bool) config('short-url.domains.enabled', false),
                 ApiKeyResource::class => (bool) config('short-url.api.enabled', false),
+                BioPageResource::class => (bool) config('short-url.bio.enabled', false) && ! $this->bioPagesHidden,
                 default => true,
             },
         ));
@@ -90,6 +94,8 @@ class FilamentShortUrlPlugin implements Plugin
                 ExpiringLinks::class,
             ]);
         }
+
+        $panel->widgets([UsageOverview::class]);
     }
 
     public function boot(Panel $panel): void {}
