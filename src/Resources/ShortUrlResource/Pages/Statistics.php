@@ -18,6 +18,7 @@ use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\Oper
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\ReferrerTypesChart;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\StatsOverview;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\UtmFunnel;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\VariantsChart;
 
 class Statistics extends Page
 {
@@ -87,6 +88,7 @@ class Statistics extends Page
             ReferrerTypesChart::class,
             LanguagesList::class,
             UtmFunnel::class,
+            VariantsChart::class,
         ];
     }
 
