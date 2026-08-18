@@ -6,13 +6,15 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Concerns\HandlesUnsafeDestination;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Concerns\HandlesManagerExceptions;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Concerns\HashesPassword;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\AuditTimeline;
+use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
+use JeffersonGoncalves\LaravelShortUrl\ShortUrlManager;
 
 class EditShortUrl extends EditRecord
 {
-    use HandlesUnsafeDestination;
+    use HandlesManagerExceptions;
     use HashesPassword;
 
     protected static string $resource = ShortUrlResource::class;
@@ -31,7 +33,11 @@ class EditShortUrl extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        return $this->withUnsafeDestinationHandling(fn (): Model => parent::handleRecordUpdate($record, $data));
+        if (! $record instanceof ShortUrl) {
+            return parent::handleRecordUpdate($record, $data);
+        }
+
+        return $this->withManagerExceptionHandling(fn (): Model => app(ShortUrlManager::class)->update($record, $data));
     }
 
     protected function getFooterWidgets(): array

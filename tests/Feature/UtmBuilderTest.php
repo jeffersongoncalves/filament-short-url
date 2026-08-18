@@ -37,6 +37,30 @@ it('reads utm params back out of a pasted destination url', function () {
         ->and($component->get('data.utm_campaign'))->toBe('spring');
 });
 
+it('blocks creating a link when a required utm parameter is missing', function () {
+    config()->set('short-url.utm.required', ['utm_medium']);
+
+    livewire(CreateShortUrl::class)
+        ->fillForm(['destination_url' => 'https://example.com/landing'])
+        ->call('create');
+
+    expect(ShortUrl::query()->where('destination_url', 'https://example.com/landing')->exists())->toBeFalse();
+});
+
+it('allows creating a link once the required utm parameter is filled in', function () {
+    config()->set('short-url.utm.required', ['utm_medium']);
+
+    livewire(CreateShortUrl::class)
+        ->fillForm([
+            'destination_url' => 'https://example.com/landing2',
+            'utm_medium' => 'email',
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect(ShortUrl::query()->where('destination_url', 'like', 'https://example.com/landing2%')->exists())->toBeTrue();
+});
+
 it('fills utm fields from a saved template', function () {
     $template = UtmTemplate::factory()->create([
         'utm_source' => 'facebook',

@@ -142,6 +142,8 @@ return [
         'campaign' => 'Campaign',
         'term' => 'Term',
         'content' => 'Content',
+        'required_missing_title' => 'Required UTM parameter missing',
+        'required_missing_body' => 'This link cannot be saved without a value for :parameter — check the UTM Parameters section.',
     ],
     'stats' => [
         'total_visits' => 'Total Visits',
@@ -202,6 +204,8 @@ return [
         'links_this_month' => 'Links This Month',
         'domains' => 'Domains',
         'plan' => 'Plan',
+        'plan_limit_exceeded_title' => 'Plan limit exceeded',
+        'plan_limit_exceeded_body' => 'The current plan allows at most :limit for :limit_key.',
     ],
     'dashboard' => [
         'total_links' => 'Total Links',

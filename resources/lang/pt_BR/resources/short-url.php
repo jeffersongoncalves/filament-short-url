@@ -142,6 +142,8 @@ return [
         'campaign' => 'Campanha',
         'term' => 'Termo',
         'content' => 'Conteúdo',
+        'required_missing_title' => 'Parâmetro UTM obrigatório ausente',
+        'required_missing_body' => 'Este link não pode ser salvo sem um valor para :parameter — verifique a seção Parâmetros UTM.',
     ],
     'stats' => [
         'total_visits' => 'Total de Visitas',
@@ -202,6 +204,8 @@ return [
         'links_this_month' => 'Links Este Mês',
         'domains' => 'Domínios',
         'plan' => 'Plano',
+        'plan_limit_exceeded_title' => 'Limite do plano excedido',
+        'plan_limit_exceeded_body' => 'O plano atual permite no máximo :limit para :limit_key.',
     ],
     'dashboard' => [
         'total_links' => 'Total de Links',

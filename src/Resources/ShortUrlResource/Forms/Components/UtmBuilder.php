@@ -44,6 +44,7 @@ class UtmBuilder
             ...collect(static::FIELDS)->map(fn (string $field): TextInput => TextInput::make("utm_{$field}")
                 ->label(__("filament-short-url::resources/short-url.utm.{$field}"))
                 ->live(onBlur: true)
+                ->required(in_array("utm_{$field}", config('short-url.utm.required', []), true))
                 ->afterStateUpdated(fn (Set $set, Get $get) => static::syncToDestination($set, $get)))->all(),
         ])->columns(3)->columnSpanFull();
     }
