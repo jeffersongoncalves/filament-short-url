@@ -125,6 +125,18 @@ return [
         'audit_log' => 'Histórico de Auditoria',
         'audit_log_empty' => 'Nenhum evento de auditoria registrado ainda.',
     ],
+    'tracking' => [
+        'section' => 'Rastreamento',
+        'track_visits' => 'Rastrear Visitas',
+        'track_ip_address' => 'Rastrear Endereço IP',
+        'track_browser' => 'Rastrear Navegador',
+        'track_browser_version' => 'Rastrear Versão do Navegador',
+        'track_operating_system' => 'Rastrear Sistema Operacional',
+        'track_operating_system_version' => 'Rastrear Versão do SO',
+        'track_device_type' => 'Rastrear Tipo de Dispositivo',
+        'track_referer_url' => 'Rastrear URL de Referência',
+        'track_browser_language' => 'Rastrear Idioma do Navegador',
+    ],
     'dashboard' => [
         'total_links' => 'Total de Links',
         'total_visits' => 'Total de Visitas',

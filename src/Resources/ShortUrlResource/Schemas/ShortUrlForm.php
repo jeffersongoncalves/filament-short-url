@@ -136,6 +136,21 @@ class ShortUrlForm
                         ->dehydrated(false)
                         ->visible(fn (?ShortUrl $record): bool => $record?->exists && $record->safe_browsing_status !== null),
                 ]),
+
+            Section::make(__('filament-short-url::resources/short-url.tracking.section'))
+                ->columnSpanFull()
+                ->columns(3)
+                ->schema([
+                    Toggle::make('track_visits')->label(__('filament-short-url::resources/short-url.tracking.track_visits'))->default(true),
+                    Toggle::make('track_ip_address')->label(__('filament-short-url::resources/short-url.tracking.track_ip_address'))->default(true),
+                    Toggle::make('track_browser')->label(__('filament-short-url::resources/short-url.tracking.track_browser'))->default(true),
+                    Toggle::make('track_browser_version')->label(__('filament-short-url::resources/short-url.tracking.track_browser_version'))->default(true),
+                    Toggle::make('track_operating_system')->label(__('filament-short-url::resources/short-url.tracking.track_operating_system'))->default(true),
+                    Toggle::make('track_operating_system_version')->label(__('filament-short-url::resources/short-url.tracking.track_operating_system_version'))->default(true),
+                    Toggle::make('track_device_type')->label(__('filament-short-url::resources/short-url.tracking.track_device_type'))->default(true),
+                    Toggle::make('track_referer_url')->label(__('filament-short-url::resources/short-url.tracking.track_referer_url'))->default(true),
+                    Toggle::make('track_browser_language')->label(__('filament-short-url::resources/short-url.tracking.track_browser_language'))->default(true),
+                ]),
         ]);
     }
 }

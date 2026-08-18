@@ -7,8 +7,10 @@ use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\SettingsPage;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ApiKeyResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\CustomDomainResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalOverview;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\TopLinks;
@@ -19,6 +21,8 @@ class FilamentShortUrlPlugin implements Plugin
     protected array $resources = [
         ShortUrlResource::class,
         CustomDomainResource::class,
+        ApiKeyResource::class,
+        WebhookResource::class,
     ];
 
     protected ?string $navigationGroup = null;
@@ -64,6 +68,7 @@ class FilamentShortUrlPlugin implements Plugin
             $this->resources,
             fn (string $resource): bool => match ($resource) {
                 CustomDomainResource::class => (bool) config('short-url.domains.enabled', false),
+                ApiKeyResource::class => (bool) config('short-url.api.enabled', false),
                 default => true,
             },
         ));

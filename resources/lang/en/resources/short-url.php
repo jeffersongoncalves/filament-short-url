@@ -125,6 +125,18 @@ return [
         'audit_log' => 'Audit Log',
         'audit_log_empty' => 'No audit events recorded yet.',
     ],
+    'tracking' => [
+        'section' => 'Tracking',
+        'track_visits' => 'Track Visits',
+        'track_ip_address' => 'Track IP Address',
+        'track_browser' => 'Track Browser',
+        'track_browser_version' => 'Track Browser Version',
+        'track_operating_system' => 'Track Operating System',
+        'track_operating_system_version' => 'Track OS Version',
+        'track_device_type' => 'Track Device Type',
+        'track_referer_url' => 'Track Referrer URL',
+        'track_browser_language' => 'Track Browser Language',
+    ],
     'dashboard' => [
         'total_links' => 'Total Links',
         'total_visits' => 'Total Visits',
