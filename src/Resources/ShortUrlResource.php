@@ -1,17 +1,19 @@
 <?php
 
-namespace JeffersonGoncalves\FilamentShortUrl\Resources;
+namespace JeffersonGoncalves\Filament\ShortUrl\Resources;
 
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Pages\CreateShortUrl;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Pages\EditShortUrl;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Schemas\ShortUrlForm;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Tables\ShortUrlsTable;
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\CreateShortUrl;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\EditShortUrl;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Statistics;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Schemas\ShortUrlForm;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Tables\ShortUrlsTable;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 class ShortUrlResource extends Resource
@@ -35,12 +37,44 @@ class ShortUrlResource extends Resource
         static::$navigationGroup = $group;
     }
 
+    public static function setNavigationLabel(?string $label): void
+    {
+        static::$navigationLabel = $label;
+    }
+
+    public static function setNavigationIcon(string|BackedEnum|null $icon): void
+    {
+        static::$navigationIcon = $icon;
+    }
+
+    public static function setNavigationSort(?int $sort): void
+    {
+        static::$navigationSort = $sort;
+    }
+
+    public static function canViewAny(): bool
+    {
+        $callback = FilamentShortUrlPlugin::get()->getAuthorizeUsing();
+
+        if ($callback !== null) {
+            return (bool) $callback();
+        }
+
+        return parent::canViewAny();
+    }
+
     public static function getPages(): array
     {
-        return [
+        $pages = [
             'index' => ListShortUrls::route('/'),
             'create' => CreateShortUrl::route('/create'),
             'edit' => EditShortUrl::route('/{record}/edit'),
         ];
+
+        if (! FilamentShortUrlPlugin::get()->isStatisticsHidden()) {
+            $pages['statistics'] = Statistics::route('/{record}/statistics');
+        }
+
+        return $pages;
     }
 }

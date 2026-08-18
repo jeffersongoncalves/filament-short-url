@@ -1,9 +1,9 @@
 <?php
 
-namespace JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Pages;
+namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\LaravelShortUrl\Services\KeyGenerator;
 
 class CreateShortUrl extends CreateRecord

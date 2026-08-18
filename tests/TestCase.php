@@ -1,6 +1,6 @@
 <?php
 
-namespace JeffersonGoncalves\FilamentShortUrl\Tests;
+namespace JeffersonGoncalves\Filament\ShortUrl\Tests;
 
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
@@ -16,8 +16,8 @@ use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
-use JeffersonGoncalves\FilamentShortUrl\FilamentShortUrlServiceProvider;
-use JeffersonGoncalves\FilamentShortUrl\Tests\Panel\AdminPanelProvider;
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlServiceProvider;
+use JeffersonGoncalves\Filament\ShortUrl\Tests\Panel\AdminPanelProvider;
 use JeffersonGoncalves\LaravelShortUrl\LaravelShortUrlServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Livewire\Mechanisms\DataStore;
@@ -35,7 +35,7 @@ abstract class TestCase extends Orchestra
         // this package's own Tests\Factories namespace, so it needs its own guess.
         Factory::guessFactoryNamesUsing(fn (string $modelName) => str_starts_with($modelName, 'JeffersonGoncalves\\LaravelShortUrl\\')
             ? 'JeffersonGoncalves\\LaravelShortUrl\\Database\\Factories\\'.class_basename($modelName).'Factory'
-            : 'JeffersonGoncalves\\FilamentShortUrl\\Tests\\Factories\\'.class_basename($modelName).'Factory');
+            : 'JeffersonGoncalves\\Filament\\ShortUrl\\Tests\\Factories\\'.class_basename($modelName).'Factory');
     }
 
     /**

@@ -1,11 +1,11 @@
 <?php
 
-namespace JeffersonGoncalves\FilamentShortUrl\Tests\Factories;
+namespace JeffersonGoncalves\Filament\ShortUrl\Tests\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use JeffersonGoncalves\FilamentShortUrl\Tests\Models\User;
+use JeffersonGoncalves\Filament\ShortUrl\Tests\Models\User;
 
 class UserFactory extends Factory
 {

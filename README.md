@@ -16,6 +16,12 @@ de UI no Filament** (Resource com páginas de listagem, criação e edição).
 Este pacote é compatível apenas com **Filament v5** (branch `3.x`). Não há branches `1.x`/`2.x` porque o
 `jeffersongoncalves/laravel-short-url` (dependência obrigatória) foi criado diretamente para Filament v5.
 
+## Compatibilidade de versões
+
+| `filament-short-url` | `laravel-short-url` | Filament |
+| --- | --- | --- |
+| `3.x` | `^1.0` | `v5` |
+
 ## Status: Fase F1
 
 Esta é a fase fundacional. Ela entrega:
@@ -26,7 +32,14 @@ Esta é a fase fundacional. Ela entrega:
 - Formulário com validação de URL de destino, chave alfanumérica opcional (auto-gerada via `KeyGenerator` do
   pacote base quando deixada em branco), status de redirecionamento, limite de visitas, expiração, uso único e
   encaminhamento de parâmetros de query.
-- `FilamentShortUrlPlugin` com override de resource e grupo de navegação configuráveis.
+- Filtros de status (habilitado/desabilitado) e período de criação na listagem.
+- `FilamentShortUrlPlugin` com navegação (grupo, label, ícone, ordem), Resources habilitáveis e opt-outs
+  granulares (`hideStatistics()`, `hideBioPages()`) configuráveis.
+- Autorização em três níveis: closure do plugin (`authorizeUsing()`) → `ShortUrlPolicy` do core → `canViewAny()`.
+  A `ShortUrlPolicy` vive em `jeffersongoncalves/laravel-short-url` (o model é do core, a autorização do model
+  também) e é registrada automaticamente via `Gate::policy()`.
+- Traduções pt_BR, en e es.
+- Arch test garantindo que o pacote nunca acessa tabelas do core via `DB::table()`/query builder cru.
 
 Analytics, tipos de destino split/rules/geo-fence, QR codes, multi-tenancy, API pública e webhooks **não** fazem
 parte da F1 e chegarão em fases futuras.
@@ -52,14 +65,24 @@ php artisan migrate
 Registre o plugin no seu `PanelProvider`:
 
 ```php
-use JeffersonGoncalves\FilamentShortUrl\FilamentShortUrlPlugin;
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         ->plugins([
             FilamentShortUrlPlugin::make()
-                ->navigationGroup('Marketing'),
+                ->navigationGroup('Marketing')
+                ->navigationLabel('Links Curtos')
+                ->navigationIcon('heroicon-o-link')
+                ->navigationSort(50)
+                ->authorizeUsing(fn () => auth()->user()->hasRole('admin'))
+                ->authorizeSettingsUsing(fn () => auth()->user()->hasRole('admin'))
+                ->resources([
+                    \JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource::class,
+                ])
+                ->hideStatistics()
+                ->hideBioPages(),
         ]);
 }
 ```
@@ -67,6 +90,17 @@ public function panel(Panel $panel): Panel
 Isso registra o `ShortUrlResource` no painel, permitindo criar, listar e editar links curtos diretamente pela
 interface administrativa. O redirecionamento em si (rota `GET /{urlKey}`) é responsabilidade do pacote base
 `jeffersongoncalves/laravel-short-url` — consulte o README dele para configuração de rota, cache e chaves.
+
+### Autorização
+
+O acesso ao `ShortUrlResource` é resolvido em três níveis, na ordem:
+
+1. **Closure do plugin** — `authorizeUsing()`. Se definida, decide sozinha (sobrepõe a Policy).
+2. **`ShortUrlPolicy`** (registrada no core `laravel-short-url` via `Gate::policy()`), que autoriza tudo por
+   padrão — sobrescreva-a no host app ou registre outra policy para o model `ShortUrl` para restringir.
+3. **`canViewAny()`** do Resource, que consulta a Policy acima quando nenhuma closure foi definida.
+
+`authorizeSettingsUsing()` segue o mesmo fallback e será consumido pela `SettingsPage` a partir da F4.
 
 ## Testes
 

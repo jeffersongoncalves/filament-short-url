@@ -1,10 +1,10 @@
 <?php
 
-namespace JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Pages;
+namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages;
 
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 
 class ListShortUrls extends ListRecords
 {

@@ -1,9 +1,11 @@
 <?php
 
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Pages\CreateShortUrl;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Pages\EditShortUrl;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
-use JeffersonGoncalves\FilamentShortUrl\Tests\Factories\UserFactory;
+use Illuminate\Support\Facades\Gate;
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\CreateShortUrl;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\EditShortUrl;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
+use JeffersonGoncalves\Filament\ShortUrl\Tests\Factories\UserFactory;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 use function Pest\Livewire\livewire;
@@ -81,4 +83,54 @@ it('can update a short url', function () {
         ->assertHasNoFormErrors();
 
     expect($shortUrl->fresh()->title)->toBe('Updated title');
+});
+
+it('filters the table by enabled status', function () {
+    $enabled = ShortUrl::factory()->create(['is_enabled' => true]);
+    $disabled = ShortUrl::factory()->create(['is_enabled' => false]);
+
+    livewire(ListShortUrls::class)
+        ->filterTable('is_enabled', true)
+        ->assertCanSeeTableRecords([$enabled])
+        ->assertCanNotSeeTableRecords([$disabled]);
+});
+
+it('filters the table by created period', function () {
+    $old = ShortUrl::factory()->create(['created_at' => now()->subDays(10)]);
+    $recent = ShortUrl::factory()->create(['created_at' => now()]);
+
+    livewire(ListShortUrls::class)
+        ->filterTable('created_at', ['created_from' => now()->subDay()->toDateString()])
+        ->assertCanSeeTableRecords([$recent])
+        ->assertCanNotSeeTableRecords([$old]);
+});
+
+it('allows access when no plugin authorization closure is set', function () {
+    livewire(ListShortUrls::class)->assertSuccessful();
+});
+
+it('denies access when the plugin authorization closure returns false', function () {
+    FilamentShortUrlPlugin::get()->authorizeUsing(fn (): bool => false);
+
+    livewire(ListShortUrls::class)->assertForbidden();
+
+    FilamentShortUrlPlugin::get()->authorizeUsing(null);
+});
+
+it('lets the plugin authorization closure override a denying policy', function () {
+    $denyingPolicy = new class
+    {
+        public function viewAny(): bool
+        {
+            return false;
+        }
+    };
+
+    Gate::policy(ShortUrl::class, $denyingPolicy::class);
+
+    FilamentShortUrlPlugin::get()->authorizeUsing(fn (): bool => true);
+
+    livewire(ListShortUrls::class)->assertSuccessful();
+
+    FilamentShortUrlPlugin::get()->authorizeUsing(null);
 });

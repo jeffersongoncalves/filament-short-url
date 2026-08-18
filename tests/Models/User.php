@@ -1,12 +1,12 @@
 <?php
 
-namespace JeffersonGoncalves\FilamentShortUrl\Tests\Models;
+namespace JeffersonGoncalves\Filament\ShortUrl\Tests\Models;
 
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use JeffersonGoncalves\FilamentShortUrl\Tests\Factories\UserFactory;
+use JeffersonGoncalves\Filament\ShortUrl\Tests\Factories\UserFactory;
 
 class User extends Authenticatable implements FilamentUser
 {

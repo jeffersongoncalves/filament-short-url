@@ -1,6 +1,6 @@
 <?php
 
-namespace JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource\Schemas;
+namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;

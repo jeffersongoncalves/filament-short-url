@@ -1,5 +1,5 @@
 <?php
 
-use JeffersonGoncalves\FilamentShortUrl\Tests\TestCase;
+use JeffersonGoncalves\Filament\ShortUrl\Tests\TestCase;
 
 uses(TestCase::class)->in('Feature', 'Unit');

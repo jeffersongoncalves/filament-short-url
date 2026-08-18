@@ -1,12 +1,12 @@
 <?php
 
-namespace JeffersonGoncalves\FilamentShortUrl\Tests\Panel;
+namespace JeffersonGoncalves\Filament\ShortUrl\Tests\Panel;
 
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
-use JeffersonGoncalves\FilamentShortUrl\FilamentShortUrlPlugin;
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {

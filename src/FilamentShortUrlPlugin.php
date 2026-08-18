@@ -1,16 +1,38 @@
 <?php
 
-namespace JeffersonGoncalves\FilamentShortUrl;
+namespace JeffersonGoncalves\Filament\ShortUrl;
 
+use BackedEnum;
+use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use JeffersonGoncalves\FilamentShortUrl\Resources\ShortUrlResource;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
+use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
+use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalOverview;
+use JeffersonGoncalves\Filament\ShortUrl\Widgets\TopLinks;
 
 class FilamentShortUrlPlugin implements Plugin
 {
-    protected string $resource = ShortUrlResource::class;
+    /** @var array<class-string> */
+    protected array $resources = [
+        ShortUrlResource::class,
+    ];
 
     protected ?string $navigationGroup = null;
+
+    protected ?string $navigationLabel = null;
+
+    protected string|BackedEnum|null $navigationIcon = null;
+
+    protected ?int $navigationSort = null;
+
+    protected ?Closure $authorizeUsing = null;
+
+    protected ?Closure $authorizeSettingsUsing = null;
+
+    protected bool $statisticsHidden = false;
+
+    protected bool $bioPagesHidden = false;
 
     public function getId(): string
     {
@@ -23,9 +45,27 @@ class FilamentShortUrlPlugin implements Plugin
             ShortUrlResource::setNavigationGroup($this->navigationGroup);
         }
 
-        $panel->resources([
-            $this->resource,
-        ]);
+        if ($this->navigationLabel !== null) {
+            ShortUrlResource::setNavigationLabel($this->navigationLabel);
+        }
+
+        if ($this->navigationIcon !== null) {
+            ShortUrlResource::setNavigationIcon($this->navigationIcon);
+        }
+
+        if ($this->navigationSort !== null) {
+            ShortUrlResource::setNavigationSort($this->navigationSort);
+        }
+
+        $panel->resources($this->resources);
+
+        if (! $this->statisticsHidden) {
+            $panel->widgets([
+                GlobalOverview::class,
+                TopLinks::class,
+                ExpiringLinks::class,
+            ]);
+        }
     }
 
     public function boot(Panel $panel): void {}
@@ -43,9 +83,12 @@ class FilamentShortUrlPlugin implements Plugin
         return $plugin;
     }
 
-    public function resource(string $resource): static
+    /**
+     * @param  array<class-string>  $resources
+     */
+    public function resources(array $resources): static
     {
-        $this->resource = $resource;
+        $this->resources = $resources;
 
         return $this;
     }
@@ -55,5 +98,74 @@ class FilamentShortUrlPlugin implements Plugin
         $this->navigationGroup = $group;
 
         return $this;
+    }
+
+    public function navigationLabel(?string $label): static
+    {
+        $this->navigationLabel = $label;
+
+        return $this;
+    }
+
+    public function navigationIcon(string|BackedEnum|null $icon): static
+    {
+        $this->navigationIcon = $icon;
+
+        return $this;
+    }
+
+    public function navigationSort(?int $sort): static
+    {
+        $this->navigationSort = $sort;
+
+        return $this;
+    }
+
+    public function authorizeUsing(?Closure $callback): static
+    {
+        $this->authorizeUsing = $callback;
+
+        return $this;
+    }
+
+    public function getAuthorizeUsing(): ?Closure
+    {
+        return $this->authorizeUsing;
+    }
+
+    public function authorizeSettingsUsing(?Closure $callback): static
+    {
+        $this->authorizeSettingsUsing = $callback;
+
+        return $this;
+    }
+
+    public function getAuthorizeSettingsUsing(): ?Closure
+    {
+        return $this->authorizeSettingsUsing;
+    }
+
+    public function hideStatistics(bool $hidden = true): static
+    {
+        $this->statisticsHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isStatisticsHidden(): bool
+    {
+        return $this->statisticsHidden;
+    }
+
+    public function hideBioPages(bool $hidden = true): static
+    {
+        $this->bioPagesHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isBioPagesHidden(): bool
+    {
+        return $this->bioPagesHidden;
     }
 }
