@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ViewColumn;
@@ -48,6 +49,12 @@ class ShortUrlsTable
 
                 ToggleColumn::make('is_enabled')
                     ->label(__('filament-short-url::resources/short-url.fields.is_enabled')),
+
+                IconColumn::make('is_protected')
+                    ->label(__('filament-short-url::resources/short-url.security.password'))
+                    ->state(fn (ShortUrl $record): bool => filled($record->password_hash))
+                    ->icon(fn (bool $state): string => $state ? 'heroicon-o-lock-closed' : 'heroicon-o-lock-open')
+                    ->color(fn (bool $state): string => $state ? 'warning' : 'gray'),
 
                 TextColumn::make('total_visits')
                     ->label(__('filament-short-url::resources/short-url.fields.total_visits'))

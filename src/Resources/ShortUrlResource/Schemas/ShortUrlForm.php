@@ -7,6 +7,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Unique;
@@ -99,6 +100,42 @@ class ShortUrlForm
             SplitSlider::make('rotation_variants')
                 ->visible(fn (Get $get): bool => $get('destination_type') === 'split')
                 ->columnSpanFull(),
+
+            Section::make(__('filament-short-url::resources/short-url.security.section'))
+                ->columnSpanFull()
+                ->columns(2)
+                ->schema([
+                    TextInput::make('password')
+                        ->label(__('filament-short-url::resources/short-url.security.password'))
+                        ->password()
+                        ->revealable()
+                        ->dehydrated(fn (?string $state): bool => filled($state))
+                        ->helperText(__('filament-short-url::resources/short-url.security.password_helper')),
+
+                    TextInput::make('password_hint')
+                        ->label(__('filament-short-url::resources/short-url.security.password_hint'))
+                        ->maxLength(255),
+
+                    Toggle::make('show_warning_page')
+                        ->label(__('filament-short-url::resources/short-url.security.show_warning_page'))
+                        ->live(),
+
+                    Textarea::make('warning_message')
+                        ->label(__('filament-short-url::resources/short-url.security.warning_message'))
+                        ->rows(2)
+                        ->visible(fn (Get $get): bool => (bool) $get('show_warning_page')),
+
+                    Select::make('safe_browsing_status')
+                        ->label(__('filament-short-url::resources/short-url.security.safe_browsing_status'))
+                        ->options([
+                            'safe' => __('filament-short-url::resources/short-url.security.safe_browsing_safe'),
+                            'unsafe' => __('filament-short-url::resources/short-url.security.safe_browsing_unsafe'),
+                            'unknown' => __('filament-short-url::resources/short-url.security.safe_browsing_unknown'),
+                        ])
+                        ->disabled()
+                        ->dehydrated(false)
+                        ->visible(fn (?ShortUrl $record): bool => $record?->exists && $record->safe_browsing_status !== null),
+                ]),
         ]);
     }
 }

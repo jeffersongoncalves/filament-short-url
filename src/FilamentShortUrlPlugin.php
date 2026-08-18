@@ -6,6 +6,7 @@ use BackedEnum;
 use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use JeffersonGoncalves\Filament\ShortUrl\Pages\SettingsPage;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\CustomDomainResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
@@ -68,6 +69,7 @@ class FilamentShortUrlPlugin implements Plugin
         ));
 
         $panel->resources($resources);
+        $panel->pages([SettingsPage::class]);
 
         if (! $this->statisticsHidden) {
             $panel->widgets([
