@@ -7,8 +7,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Unique;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\RuleBuilder;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\SplitSlider;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 class ShortUrlForm
@@ -76,6 +79,26 @@ class ShortUrlForm
             DateTimePicker::make('expires_at')
                 ->label(__('filament-short-url::resources/short-url.fields.expires_at'))
                 ->nullable(),
+
+            Select::make('destination_type')
+                ->label(__('filament-short-url::resources/short-url.fields.destination_type'))
+                ->options([
+                    'single' => __('filament-short-url::resources/short-url.fields.destination_type_single'),
+                    'rules' => __('filament-short-url::resources/short-url.fields.destination_type_rules'),
+                    'split' => __('filament-short-url::resources/short-url.fields.destination_type_split'),
+                ])
+                ->default('single')
+                ->live()
+                ->required()
+                ->columnSpanFull(),
+
+            RuleBuilder::make('targeting_rules')
+                ->visible(fn (Get $get): bool => $get('destination_type') === 'rules')
+                ->columnSpanFull(),
+
+            SplitSlider::make('rotation_variants')
+                ->visible(fn (Get $get): bool => $get('destination_type') === 'split')
+                ->columnSpanFull(),
         ]);
     }
 }

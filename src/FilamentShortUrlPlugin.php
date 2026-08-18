@@ -6,6 +6,7 @@ use BackedEnum;
 use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\CustomDomainResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalOverview;
@@ -16,6 +17,7 @@ class FilamentShortUrlPlugin implements Plugin
     /** @var array<class-string> */
     protected array $resources = [
         ShortUrlResource::class,
+        CustomDomainResource::class,
     ];
 
     protected ?string $navigationGroup = null;
@@ -57,7 +59,15 @@ class FilamentShortUrlPlugin implements Plugin
             ShortUrlResource::setNavigationSort($this->navigationSort);
         }
 
-        $panel->resources($this->resources);
+        $resources = array_values(array_filter(
+            $this->resources,
+            fn (string $resource): bool => match ($resource) {
+                CustomDomainResource::class => (bool) config('short-url.domains.enabled', false),
+                default => true,
+            },
+        ));
+
+        $panel->resources($resources);
 
         if (! $this->statisticsHidden) {
             $panel->widgets([
