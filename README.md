@@ -22,6 +22,8 @@ the core's Facade and contracts.
 
 | `filament-short-url` | `laravel-short-url` | Filament |
 | --- | --- | --- |
+| `1.x` | `^1.3` | `v3` |
+| `2.x` | `^1.3` | `v4` |
 | `3.x` | `^1.3` | `v5` |
 
 ## What's included
