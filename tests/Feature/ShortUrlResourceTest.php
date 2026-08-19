@@ -40,6 +40,24 @@ it('can render the create page', function () {
     livewire(CreateShortUrl::class)->assertSuccessful();
 });
 
+it('can render the create page as a wizard when enabled', function () {
+    FilamentShortUrlPlugin::get()->wizardForm();
+
+    livewire(CreateShortUrl::class)->assertSuccessful();
+
+    FilamentShortUrlPlugin::get()->wizardForm(false);
+});
+
+it('can render the edit page as a wizard when enabled', function () {
+    FilamentShortUrlPlugin::get()->wizardForm();
+
+    $shortUrl = ShortUrl::factory()->create();
+
+    livewire(EditShortUrl::class, ['record' => $shortUrl->getRouteKey()])->assertSuccessful();
+
+    FilamentShortUrlPlugin::get()->wizardForm(false);
+});
+
 it('can create a short url and auto-generates the key when left empty', function () {
     livewire(CreateShortUrl::class)
         ->fillForm([
@@ -83,6 +101,38 @@ it('can update a short url', function () {
         ->assertHasNoFormErrors();
 
     expect($shortUrl->fresh()->title)->toBe('Updated title');
+});
+
+it('locks url_key from being changed on edit', function () {
+    $shortUrl = ShortUrl::factory()->create(['url_key' => 'original-key']);
+
+    livewire(EditShortUrl::class, ['record' => $shortUrl->getRouteKey()])
+        ->assertFormFieldIsDisabled('url_key')
+        ->fillForm(['url_key' => 'attempted-change'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($shortUrl->fresh()->url_key)->toBe('original-key');
+});
+
+it('hides the pixels section when disabled on the plugin', function () {
+    FilamentShortUrlPlugin::get()->hidePixels();
+
+    livewire(CreateShortUrl::class)
+        ->assertSuccessful()
+        ->assertFormFieldDoesNotExist('pixels');
+
+    FilamentShortUrlPlugin::get()->hidePixels(false);
+});
+
+it('hides rule/split targeting when disabled on the plugin', function () {
+    FilamentShortUrlPlugin::get()->hideTargeting();
+
+    livewire(CreateShortUrl::class)
+        ->assertSuccessful()
+        ->assertFormFieldDoesNotExist('destination_type');
+
+    FilamentShortUrlPlugin::get()->hideTargeting(false);
 });
 
 it('filters the table by enabled status', function () {

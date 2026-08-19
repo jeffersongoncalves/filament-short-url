@@ -7,10 +7,19 @@ return [
     'metrics' => [
         'title' => 'Métricas',
     ],
+    'wizard' => [
+        'essentials' => 'Esenciales',
+        'targeting' => 'Segmentación',
+        'security_tracking' => 'Seguridad y Seguimiento',
+        'qr_deep_link' => 'QR y Deep Link',
+        'utm_pixels' => 'UTM y Pixels',
+    ],
     'fields' => [
         'destination_url' => 'URL de Destino',
+        'short_url' => 'URL Corta',
         'url_key' => 'Clave Corta',
         'url_key_helper' => 'Deje en blanco para generar una clave única automáticamente.',
+        'url_key_locked_helper' => 'No se puede cambiar después de creado — cambiarlo rompería todo enlace ya compartido o impreso.',
         'title' => 'Título',
         'notes' => 'Notas',
         'is_enabled' => 'Habilitado',
@@ -108,8 +117,11 @@ return [
     ],
     'qr' => [
         'section' => 'Diseño del Código QR',
+        'section_description' => 'Opcional — solo importa si vas a descargar/imprimir el código QR de este enlace. No es necesario para crear el enlace.',
         'dots_style' => 'Estilo de Puntos',
+        'dots_style_helper' => 'Forma de los puntos de datos del código QR. Solo estético.',
         'eyes_style' => 'Estilo de Ojos',
+        'eyes_style_helper' => 'Forma de los 3 cuadrados grandes de las esquinas ("ojos") que el lector usa para alinear el código QR. Solo estético.',
         'style_square' => 'Cuadrado',
         'style_dots' => 'Puntos',
         'style_rounded' => 'Redondeado',

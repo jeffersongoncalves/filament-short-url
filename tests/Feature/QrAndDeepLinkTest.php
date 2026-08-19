@@ -1,5 +1,6 @@
 <?php
 
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\CreateShortUrl;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\EditShortUrl;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
@@ -40,11 +41,50 @@ it('saves the qr design and deep link fields', function () {
         ->and($shortUrl->app_scheme_override)->toBe('myapp://');
 });
 
+it('updates the qr preview when the design changes', function () {
+    $component = livewire(CreateShortUrl::class)
+        ->fillForm([
+            'destination_url' => 'https://example.com',
+            'qr_design' => ['margin' => 0],
+        ]);
+
+    $htmlBefore = $component->html();
+
+    $component->fillForm(['qr_design' => ['margin' => 40]]);
+
+    $htmlAfter = $component->html();
+
+    expect($htmlBefore)->not->toBe($htmlAfter);
+});
+
+it('hides the qr design and deep link sections when disabled on the plugin', function () {
+    FilamentShortUrlPlugin::get()->hideQrDesigner()->hideDeepLinking();
+
+    livewire(CreateShortUrl::class)
+        ->assertSuccessful()
+        ->assertFormFieldDoesNotExist('qr_design.margin')
+        ->assertFormFieldDoesNotExist('app_scheme_override');
+
+    FilamentShortUrlPlugin::get()->hideQrDesigner(false)->hideDeepLinking(false);
+});
+
 it('renders the qr download modal action on the table', function () {
     $shortUrl = ShortUrl::factory()->create();
 
     livewire(ListShortUrls::class)
         ->assertTableActionVisible('qr', $shortUrl);
+});
+
+it('hides qr scans column and action from the table when the qr designer is disabled', function () {
+    FilamentShortUrlPlugin::get()->hideQrDesigner();
+
+    $shortUrl = ShortUrl::factory()->create();
+
+    livewire(ListShortUrls::class)
+        ->assertTableColumnHidden('qr_scans')
+        ->assertTableActionHidden('qr', $shortUrl);
+
+    FilamentShortUrlPlugin::get()->hideQrDesigner(false);
 });
 
 it('renders the edit page with a destination matching a registered deep link app', function () {

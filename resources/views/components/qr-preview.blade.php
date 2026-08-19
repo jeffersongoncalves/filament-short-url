@@ -8,16 +8,16 @@
     if (! $unavailable) {
         try {
             $qrDesign = new QrDesign(
-                dotsStyle: $design['dotsStyle'],
-                eyesStyle: $design['eyesStyle'],
-                gradient: $design['gradient'],
-                margin: $design['margin'],
-                logoPath: $design['logoPath'] ? storage_path('app/public/'.$design['logoPath']) : null,
-                logoSizePercent: $design['logoSizePercent'],
-                errorCorrection: $design['errorCorrection'],
+                dotsStyle: $design['dotsStyle'] ?? 'square',
+                eyesStyle: $design['eyesStyle'] ?? 'square',
+                gradient: $design['gradient'] ?? null,
+                margin: $design['margin'] ?? 0,
+                logoPath: ($design['logoPath'] ?? null) ? storage_path('app/public/'.$design['logoPath']) : null,
+                logoSizePercent: $design['logoSizePercent'] ?? 20,
+                errorCorrection: $design['errorCorrection'] ?? 'M',
             );
 
-            $svg = app()->makeWith(QrCodeBuilder::class, ['data' => 'https://short.example/preview'])
+            $svg = app()->makeWith(QrCodeBuilder::class, ['data' => $previewUrl ?? 'https://short.example/preview'])
                 ->design($qrDesign)
                 ->toSvg();
         } catch (\Throwable $e) {
@@ -26,17 +26,17 @@
     }
 @endphp
 
-<div class="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+<div class="fi-su-qr-preview">
     @if ($unavailable)
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="fi-su-qr-preview-empty">
             {{ __('filament-short-url::resources/short-url.qr.package_missing') }}
         </p>
     @elseif ($svg)
-        <div class="h-48 w-48 [&_svg]:h-full [&_svg]:w-full">
+        <div class="fi-su-qr-preview-image">
             {!! $svg !!}
         </div>
     @else
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="fi-su-qr-preview-empty">
             {{ __('filament-short-url::resources/short-url.qr.preview_unavailable') }}
         </p>
     @endif

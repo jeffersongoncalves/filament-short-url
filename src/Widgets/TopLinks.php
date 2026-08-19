@@ -19,7 +19,10 @@ class TopLinks extends TableWidget
             ->paginated(false)
             ->columns([
                 TextColumn::make('url_key')
-                    ->label(__('filament-short-url::resources/short-url.fields.url_key')),
+                    ->label(__('filament-short-url::resources/short-url.fields.url_key'))
+                    ->copyable()
+                    ->copyableState(fn (ShortUrl $record): string => $record->fullUrl())
+                    ->copyMessage(__('filament-short-url::resources/short-url.actions.copied')),
                 TextColumn::make('destination_url')
                     ->label(__('filament-short-url::resources/short-url.fields.destination_url'))
                     ->limit(50),

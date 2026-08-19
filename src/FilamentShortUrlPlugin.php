@@ -48,6 +48,26 @@ class FilamentShortUrlPlugin implements Plugin
 
     protected bool $bioPagesHidden = false;
 
+    protected bool $wizardForm = false;
+
+    protected bool $qrDesignerHidden = false;
+
+    protected bool $deepLinkingHidden = false;
+
+    protected bool $securityHidden = false;
+
+    protected bool $utmHidden = false;
+
+    protected bool $pixelsHidden = false;
+
+    protected bool $targetingHidden = false;
+
+    protected bool $webhooksHidden = false;
+
+    protected bool $foldersHidden = false;
+
+    protected bool $tagsHidden = false;
+
     public function getId(): string
     {
         return 'filament-short-url';
@@ -73,6 +93,9 @@ class FilamentShortUrlPlugin implements Plugin
                 CustomDomainResource::class => (bool) config('short-url.domains.enabled', false),
                 ApiKeyResource::class => (bool) config('short-url.api.enabled', false),
                 BioPageResource::class => (bool) config('short-url.bio.enabled', false) && ! $this->bioPagesHidden,
+                WebhookResource::class => ! $this->webhooksHidden,
+                FolderResource::class => ! $this->foldersHidden,
+                TagResource::class => ! $this->tagsHidden,
                 default => true,
             },
         ));
@@ -191,5 +214,153 @@ class FilamentShortUrlPlugin implements Plugin
     public function isBioPagesHidden(): bool
     {
         return $this->bioPagesHidden;
+    }
+
+    public function wizardForm(bool $enabled = true): static
+    {
+        $this->wizardForm = $enabled;
+
+        return $this;
+    }
+
+    public function isWizardFormEnabled(): bool
+    {
+        return $this->wizardForm;
+    }
+
+    public function hideQrDesigner(bool $hidden = true): static
+    {
+        $this->qrDesignerHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isQrDesignerHidden(): bool
+    {
+        return $this->qrDesignerHidden;
+    }
+
+    public function hideDeepLinking(bool $hidden = true): static
+    {
+        $this->deepLinkingHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isDeepLinkingHidden(): bool
+    {
+        return $this->deepLinkingHidden;
+    }
+
+    public function hideSecurity(bool $hidden = true): static
+    {
+        $this->securityHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isSecurityHidden(): bool
+    {
+        return $this->securityHidden;
+    }
+
+    /**
+     * Hides the UTM Parameters form section. If `short-url.utm.required`
+     * lists required UTM fields, keep this off — the field would still be
+     * enforced server-side by ShortUrlManager with no way to fill it in.
+     */
+    public function hideUtm(bool $hidden = true): static
+    {
+        $this->utmHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isUtmHidden(): bool
+    {
+        return $this->utmHidden;
+    }
+
+    public function hidePixels(bool $hidden = true): static
+    {
+        $this->pixelsHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isPixelsHidden(): bool
+    {
+        return $this->pixelsHidden;
+    }
+
+    /**
+     * Hides rule-based/A-B split targeting (destination_type, targeting_rules,
+     * rotation_variants) — every link is a plain single-destination redirect.
+     */
+    public function hideTargeting(bool $hidden = true): static
+    {
+        $this->targetingHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isTargetingHidden(): bool
+    {
+        return $this->targetingHidden;
+    }
+
+    public function hideWebhooks(bool $hidden = true): static
+    {
+        $this->webhooksHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isWebhooksHidden(): bool
+    {
+        return $this->webhooksHidden;
+    }
+
+    public function hideFolders(bool $hidden = true): static
+    {
+        $this->foldersHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isFoldersHidden(): bool
+    {
+        return $this->foldersHidden;
+    }
+
+    public function hideTags(bool $hidden = true): static
+    {
+        $this->tagsHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isTagsHidden(): bool
+    {
+        return $this->tagsHidden;
+    }
+
+    /**
+     * Convenience toggle: hides every optional/advanced form section (QR
+     * design, deep linking, security, UTM, pixels, rule/split targeting)
+     * and the Webhooks resource in one call, leaving just the essentials
+     * and tracking toggles — for installs that only need "shorten a link".
+     */
+    public function simpleMode(bool $enabled = true): static
+    {
+        $this->hideQrDesigner($enabled);
+        $this->hideDeepLinking($enabled);
+        $this->hideSecurity($enabled);
+        $this->hideUtm($enabled);
+        $this->hidePixels($enabled);
+        $this->hideTargeting($enabled);
+        $this->hideWebhooks($enabled);
+
+        return $this;
     }
 }

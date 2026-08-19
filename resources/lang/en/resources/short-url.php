@@ -7,10 +7,19 @@ return [
     'metrics' => [
         'title' => 'Metrics',
     ],
+    'wizard' => [
+        'essentials' => 'Essentials',
+        'targeting' => 'Targeting',
+        'security_tracking' => 'Security & Tracking',
+        'qr_deep_link' => 'QR & Deep Link',
+        'utm_pixels' => 'UTM & Pixels',
+    ],
     'fields' => [
         'destination_url' => 'Destination URL',
+        'short_url' => 'Short URL',
         'url_key' => 'Short Key',
         'url_key_helper' => 'Leave empty to auto-generate a unique key.',
+        'url_key_locked_helper' => 'Cannot be changed after creation — changing it would break every link already shared or printed.',
         'title' => 'Title',
         'notes' => 'Notes',
         'is_enabled' => 'Enabled',
@@ -108,8 +117,11 @@ return [
     ],
     'qr' => [
         'section' => 'QR Code Design',
+        'section_description' => 'Optional — only matters if you plan to download/print this link\'s QR code. Not required to create the link.',
         'dots_style' => 'Dots Style',
+        'dots_style_helper' => 'Shape of the QR code\'s data dots. Purely visual.',
         'eyes_style' => 'Eyes Style',
+        'eyes_style_helper' => 'Shape of the 3 large corner squares (the "eyes") scanners use to align the QR code. Purely visual.',
         'style_square' => 'Square',
         'style_dots' => 'Dots',
         'style_rounded' => 'Rounded',

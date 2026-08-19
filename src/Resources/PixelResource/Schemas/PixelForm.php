@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\Filament\ShortUrl\Resources\PixelResource\Schemas;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use JeffersonGoncalves\LaravelShortUrl\Registries\PixelProviderRegistry;
@@ -12,7 +13,15 @@ class PixelForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->schema([
+        return $schema->schema(static::fields());
+    }
+
+    /**
+     * @return array<int, Component>
+     */
+    public static function fields(): array
+    {
+        return [
             TextInput::make('name')
                 ->label(__('filament-short-url::resources/pixel.fields.name'))
                 ->required()
@@ -27,7 +36,7 @@ class PixelForm
                 ->required(),
 
             ...static::configFields(),
-        ]);
+        ];
     }
 
     /**

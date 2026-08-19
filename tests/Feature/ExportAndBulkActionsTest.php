@@ -1,5 +1,6 @@
 <?php
 
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
 use JeffersonGoncalves\Filament\ShortUrl\Tests\Factories\UserFactory;
 use JeffersonGoncalves\LaravelShortUrl\Models\Folder;
@@ -72,6 +73,18 @@ it('applies tags to short urls using the resource relation directly', function (
 
     livewire(ListShortUrls::class)
         ->assertTableBulkActionExists('apply_tags');
+});
+
+it('hides folder/tag filters and bulk actions when disabled on the plugin', function () {
+    FilamentShortUrlPlugin::get()->hideFolders()->hideTags();
+
+    livewire(ListShortUrls::class)
+        ->assertTableFilterHidden('folder_id')
+        ->assertTableFilterHidden('tags')
+        ->assertTableBulkActionHidden('move_to_folder')
+        ->assertTableBulkActionHidden('apply_tags');
+
+    FilamentShortUrlPlugin::get()->hideFolders(false)->hideTags(false);
 });
 
 it('filters the table by folder and archived status', function () {

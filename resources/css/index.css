@@ -1,0 +1,728 @@
+/* Filament Short URL - Custom Styles */
+/* Plain CSS (no Tailwind utility classes) so it compiles standalone and is
+   never subject to the host app's own Tailwind content-scan/purge. */
+
+/* ========================
+   Relative Time Badge
+   ======================== */
+
+.fi-su-time-badge-empty {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--gray-400);
+}
+
+:is(.dark) .fi-su-time-badge-empty {
+    color: var(--gray-500);
+}
+
+.fi-su-time-badge-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.fi-su-time-badge {
+    border-radius: 0.375rem;
+    background-color: var(--gray-100);
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+:is(.dark) .fi-su-time-badge {
+    background-color: var(--gray-700);
+    color: var(--gray-200);
+}
+
+.fi-su-time-badge-tooltip {
+    position: absolute;
+    z-index: 10;
+    margin-top: 0.25rem;
+    white-space: nowrap;
+    border-radius: 0.375rem;
+    background-color: var(--gray-900);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: #fff;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+:is(.dark) .fi-su-time-badge-tooltip {
+    background-color: var(--gray-700);
+}
+
+/* ========================
+   QR Preview / Download
+   ======================== */
+
+.fi-su-qr-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border: 1px solid var(--gray-200);
+    background-color: #fff;
+    padding: 1rem;
+}
+
+:is(.dark) .fi-su-qr-preview {
+    border-color: var(--gray-700);
+    background-color: var(--gray-800);
+}
+
+.fi-su-qr-preview-image {
+    height: 12rem;
+    width: 12rem;
+}
+
+.fi-su-qr-preview-image svg {
+    height: 100%;
+    width: 100%;
+}
+
+.fi-su-qr-preview-empty {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-qr-preview-empty {
+    color: var(--gray-400);
+}
+
+.fi-su-qr-formats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+    .fi-su-qr-formats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.fi-su-qr-format-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border: 1px solid var(--gray-200);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    text-decoration: none;
+}
+
+.fi-su-qr-format-link:hover {
+    background-color: var(--gray-50);
+}
+
+:is(.dark) .fi-su-qr-format-link {
+    border-color: var(--gray-700);
+    color: var(--gray-200);
+}
+
+:is(.dark) .fi-su-qr-format-link:hover {
+    background-color: var(--gray-700);
+}
+
+/* ========================
+   Deep Link Preview
+   ======================== */
+
+.fi-su-deep-link {
+    border-radius: 0.5rem;
+    border: 1px solid var(--gray-200);
+    padding: 1rem;
+}
+
+:is(.dark) .fi-su-deep-link {
+    border-color: var(--gray-700);
+}
+
+.fi-su-deep-link-empty {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-deep-link-empty {
+    color: var(--gray-400);
+}
+
+.fi-su-deep-link-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.fi-su-deep-link-icon-wrap {
+    display: flex;
+    height: 2.5rem;
+    width: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    background-color: var(--primary-50);
+    color: var(--primary-600);
+}
+
+:is(.dark) .fi-su-deep-link-icon-wrap {
+    background-color: rgb(from var(--primary-500) r g b / 0.1);
+    color: var(--primary-400);
+}
+
+.fi-su-deep-link-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.fi-su-deep-link-label {
+    font-weight: 500;
+    color: var(--gray-950);
+}
+
+:is(.dark) .fi-su-deep-link-label {
+    color: #fff;
+}
+
+.fi-su-deep-link-scheme {
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-deep-link-scheme {
+    color: var(--gray-400);
+}
+
+/* ========================
+   DNS Instructions
+   ======================== */
+
+.fi-su-dns {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.fi-su-dns-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.fi-su-dns-group-title {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--gray-950);
+}
+
+:is(.dark) .fi-su-dns-group-title {
+    color: #fff;
+}
+
+.fi-su-dns-table {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--gray-50);
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+:is(.dark) .fi-su-dns-table {
+    background-color: var(--gray-800);
+}
+
+.fi-su-dns-key {
+    font-weight: 500;
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-dns-key {
+    color: var(--gray-400);
+}
+
+.fi-su-dns-value {
+    grid-column: span 2 / span 2;
+    overflow-wrap: break-word;
+    font-family: ui-monospace, monospace;
+}
+
+.fi-su-dns-value--copyable {
+    cursor: pointer;
+}
+
+.fi-su-dns-tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+:is(.dark) .fi-su-dns-tabs {
+    border-bottom-color: var(--gray-700);
+}
+
+.fi-su-dns-tab {
+    border-bottom: 2px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--gray-500);
+    background: none;
+    cursor: pointer;
+}
+
+.fi-su-dns-tab.fi-active {
+    border-bottom-color: var(--primary-500);
+    color: var(--primary-600);
+}
+
+.fi-su-dns-hint {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--gray-600);
+}
+
+:is(.dark) .fi-su-dns-hint {
+    color: var(--gray-300);
+}
+
+/* ========================
+   Webhook Payload Preview
+   ======================== */
+
+.fi-su-payload {
+    position: relative;
+}
+
+.fi-su-payload-copy-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    border-radius: 0.375rem;
+    background-color: var(--gray-200);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    border: none;
+    cursor: pointer;
+}
+
+.fi-su-payload-copy-btn:hover {
+    background-color: var(--gray-300);
+}
+
+:is(.dark) .fi-su-payload-copy-btn {
+    background-color: var(--gray-700);
+    color: var(--gray-200);
+}
+
+:is(.dark) .fi-su-payload-copy-btn:hover {
+    background-color: var(--gray-600);
+}
+
+.fi-su-payload-pre {
+    max-height: 24rem;
+    overflow: auto;
+    border-radius: 0.5rem;
+    background-color: var(--gray-50);
+    padding: 1rem;
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+}
+
+:is(.dark) .fi-su-payload-pre {
+    background-color: var(--gray-900);
+}
+
+.fi-su-json-string { color: #059669; }
+.fi-su-json-key { color: #0284c7; }
+.fi-su-json-bool { color: #d97706; }
+.fi-su-json-num { color: #c026d3; }
+
+:is(.dark) .fi-su-json-string { color: #34d399; }
+:is(.dark) .fi-su-json-key { color: #38bdf8; }
+:is(.dark) .fi-su-json-bool { color: #fbbf24; }
+:is(.dark) .fi-su-json-num { color: #e879f9; }
+
+/* ========================
+   Import Preview / Report
+   ======================== */
+
+.fi-su-import-box {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--gray-200);
+    padding: 1rem;
+}
+
+:is(.dark) .fi-su-import-box {
+    border-color: var(--gray-700);
+}
+
+.fi-su-import-heading {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--gray-950);
+}
+
+:is(.dark) .fi-su-import-heading {
+    color: #fff;
+}
+
+.fi-su-import-warning {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--warning-600);
+}
+
+:is(.dark) .fi-su-import-warning {
+    color: var(--warning-400);
+}
+
+.fi-su-import-error {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--danger-600);
+}
+
+:is(.dark) .fi-su-import-error {
+    color: var(--danger-400);
+}
+
+.fi-su-import-table-wrap {
+    overflow-x: auto;
+}
+
+.fi-su-import-table {
+    width: 100%;
+    text-align: left;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    border-collapse: collapse;
+}
+
+.fi-su-import-table th {
+    padding: 0.25rem 0.5rem;
+    font-weight: 500;
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-import-table th {
+    color: var(--gray-400);
+}
+
+.fi-su-import-table td {
+    padding: 0.25rem 0.5rem;
+    color: var(--gray-700);
+    max-width: 16rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+:is(.dark) .fi-su-import-table td {
+    color: var(--gray-200);
+}
+
+.fi-su-import-table tr {
+    border-top: 1px solid var(--gray-100);
+}
+
+:is(.dark) .fi-su-import-table tr {
+    border-top-color: var(--gray-800);
+}
+
+.fi-su-import-summary {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--gray-950);
+}
+
+:is(.dark) .fi-su-import-summary {
+    color: #fff;
+}
+
+/* ========================
+   Audit Timeline
+   ======================== */
+
+.fi-su-audit-empty {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-audit-empty {
+    color: var(--gray-400);
+}
+
+.fi-su-audit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.fi-su-audit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.fi-su-audit-dot {
+    margin-top: 0.25rem;
+    height: 0.5rem;
+    width: 0.5rem;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    background-color: var(--primary-500);
+}
+
+.fi-su-audit-event {
+    font-weight: 500;
+    color: var(--gray-950);
+}
+
+:is(.dark) .fi-su-audit-event {
+    color: #fff;
+}
+
+.fi-su-audit-time {
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-audit-time {
+    color: var(--gray-400);
+}
+
+/* ========================
+   Ranked List / UTM Funnel / Variants Chart
+   ======================== */
+
+.fi-su-empty-text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-empty-text {
+    color: var(--gray-400);
+}
+
+.fi-su-ranked-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.fi-su-ranked-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.fi-su-ranked-label {
+    width: 7rem;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--gray-700);
+}
+
+:is(.dark) .fi-su-ranked-label {
+    color: var(--gray-200);
+}
+
+.fi-su-ranked-bar-track {
+    height: 0.5rem;
+    flex: 1 1 0%;
+    overflow: hidden;
+    border-radius: 9999px;
+    background-color: var(--gray-100);
+}
+
+:is(.dark) .fi-su-ranked-bar-track {
+    background-color: var(--gray-700);
+}
+
+.fi-su-ranked-bar-fill {
+    display: block;
+    height: 100%;
+    border-radius: 9999px;
+    background-color: var(--primary-500);
+}
+
+.fi-su-ranked-count {
+    width: 3rem;
+    flex-shrink: 0;
+    text-align: right;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--gray-950);
+}
+
+:is(.dark) .fi-su-ranked-count {
+    color: #fff;
+}
+
+.fi-su-funnel-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .fi-su-funnel-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.fi-su-funnel-col-title {
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-funnel-col-title {
+    color: var(--gray-400);
+}
+
+.fi-su-funnel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.fi-su-funnel-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.fi-su-funnel-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--gray-700);
+}
+
+:is(.dark) .fi-su-funnel-label {
+    color: var(--gray-200);
+}
+
+.fi-su-funnel-count {
+    font-weight: 500;
+    color: var(--gray-950);
+}
+
+:is(.dark) .fi-su-funnel-count {
+    color: #fff;
+}
+
+.fi-su-variants-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.fi-su-variant-header {
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.fi-su-variant-label {
+    font-weight: 500;
+    color: var(--gray-950);
+}
+
+:is(.dark) .fi-su-variant-label {
+    color: #fff;
+}
+
+.fi-su-variant-meta {
+    color: var(--gray-500);
+}
+
+:is(.dark) .fi-su-variant-meta {
+    color: var(--gray-400);
+}
+
+.fi-su-variant-badge-significant {
+    margin-left: 0.25rem;
+    border-radius: 0.25rem;
+    background-color: var(--success-100);
+    padding: 0.125rem 0.375rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    color: var(--success-700);
+}
+
+:is(.dark) .fi-su-variant-badge-significant {
+    background-color: rgb(from var(--success-500) r g b / 0.2);
+    color: var(--success-400);
+}
+
+.fi-su-variant-bar-track {
+    position: relative;
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    background-color: var(--gray-100);
+}
+
+:is(.dark) .fi-su-variant-bar-track {
+    background-color: var(--gray-700);
+}
+
+.fi-su-variant-bar-fill {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    display: block;
+    border-radius: 9999px;
+    background-color: var(--primary-500);
+}
+
+.fi-su-variant-bar-marker {
+    position: absolute;
+    inset-block: 0;
+    border-left: 2px solid var(--gray-400);
+}
+
+:is(.dark) .fi-su-variant-bar-marker {
+    border-left-color: var(--gray-300);
+}

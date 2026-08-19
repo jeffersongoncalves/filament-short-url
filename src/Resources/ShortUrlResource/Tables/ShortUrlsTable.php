@@ -9,10 +9,8 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -24,7 +22,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\FolderResource\Schemas\FolderForm;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource\Schemas\TagForm;
 use JeffersonGoncalves\LaravelShortUrl\Models\Folder;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 use JeffersonGoncalves\LaravelShortUrl\Models\Tag;
@@ -34,6 +34,10 @@ class ShortUrlsTable
     public static function configure(Table $table): Table
     {
         $statisticsHidden = FilamentShortUrlPlugin::get()->isStatisticsHidden();
+        $qrDesignerHidden = FilamentShortUrlPlugin::get()->isQrDesignerHidden();
+        $securityHidden = FilamentShortUrlPlugin::get()->isSecurityHidden();
+        $foldersHidden = FilamentShortUrlPlugin::get()->isFoldersHidden();
+        $tagsHidden = FilamentShortUrlPlugin::get()->isTagsHidden();
 
         return $table
             ->when(
@@ -43,14 +47,25 @@ class ShortUrlsTable
                 ),
             )
             ->columns([
+                TextColumn::make('short_url')
+                    ->label(__('filament-short-url::resources/short-url.fields.short_url'))
+                    ->state(fn (ShortUrl $record): string => $record->fullUrl())
+                    ->limit(24)
+                    ->tooltip(fn (ShortUrl $record): string => $record->fullUrl())
+                    ->copyable()
+                    ->copyMessage(__('filament-short-url::resources/short-url.actions.copied')),
+
                 TextColumn::make('url_key')
                     ->label(__('filament-short-url::resources/short-url.fields.url_key'))
                     ->copyable()
-                    ->searchable(),
+                    ->copyableState(fn (ShortUrl $record): string => $record->fullUrl())
+                    ->copyMessage(__('filament-short-url::resources/short-url.actions.copied'))
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('destination_url')
                     ->label(__('filament-short-url::resources/short-url.fields.destination_url'))
-                    ->limit(40)
+                    ->limit(24)
                     ->tooltip(fn (ShortUrl $record): string => $record->destination_url)
                     ->searchable(),
 
@@ -65,7 +80,8 @@ class ShortUrlsTable
                     ->label(__('filament-short-url::resources/short-url.security.password'))
                     ->state(fn (ShortUrl $record): bool => filled($record->password_hash))
                     ->icon(fn (bool $state): string => $state ? 'heroicon-o-lock-closed' : 'heroicon-o-lock-open')
-                    ->color(fn (bool $state): string => $state ? 'warning' : 'gray'),
+                    ->color(fn (bool $state): string => $state ? 'warning' : 'gray')
+                    ->visible(! $securityHidden),
 
                 TextColumn::make('total_visits')
                     ->label(__('filament-short-url::resources/short-url.fields.total_visits'))
@@ -74,7 +90,8 @@ class ShortUrlsTable
                 TextColumn::make('qr_scans')
                     ->label(__('filament-short-url::resources/short-url.fields.qr_scans'))
                     ->badge()
-                    ->color('gray'),
+                    ->color('gray')
+                    ->visible(! $qrDesignerHidden),
 
                 ViewColumn::make('last_visited_at')
                     ->label(__('filament-short-url::resources/short-url.fields.last_visited_at'))
@@ -107,12 +124,14 @@ class ShortUrlsTable
 
                 SelectFilter::make('folder_id')
                     ->label(__('filament-short-url::resources/short-url.filters.folder'))
-                    ->options(fn (): array => Folder::query()->pluck('name', 'id')->all()),
+                    ->options(fn (): array => Folder::query()->pluck('name', 'id')->all())
+                    ->visible(! $foldersHidden),
 
                 SelectFilter::make('tags')
                     ->label(__('filament-short-url::resources/short-url.filters.tags'))
                     ->relationship('tags', 'name')
-                    ->multiple(),
+                    ->multiple()
+                    ->visible(! $tagsHidden),
 
                 TernaryFilter::make('archived')
                     ->label(__('filament-short-url::resources/short-url.filters.archived'))
@@ -154,20 +173,28 @@ class ShortUrlsTable
                             Select::make('folder_id')
                                 ->label(__('filament-short-url::resources/folder.fields.parent'))
                                 ->options(fn (): array => Folder::query()->pluck('name', 'id')->all())
-                                ->searchable(),
+                                ->searchable()
+                                ->createOptionForm(FolderForm::fields())
+                                ->createOptionUsing(fn (array $data): int => (int) Folder::query()->create($data)->getKey()),
                         ])
                         ->action(fn (Collection $records, array $data) => $records->toQuery()->update(['folder_id' => $data['folder_id']]))
+                        ->visible(! $foldersHidden)
                         ->deselectRecordsAfterCompletion(),
 
                     BulkAction::make('apply_tags')
                         ->label(__('filament-short-url::resources/short-url.bulk.apply_tags'))
                         ->icon('heroicon-o-tag')
                         ->schema([
-                            CheckboxList::make('tag_ids')
+                            Select::make('tag_ids')
                                 ->label(__('filament-short-url::resources/tag.fields.name'))
-                                ->options(fn (): array => Tag::query()->pluck('name', 'id')->all()),
+                                ->options(fn (): array => Tag::query()->pluck('name', 'id')->all())
+                                ->multiple()
+                                ->searchable()
+                                ->createOptionForm(TagForm::fields())
+                                ->createOptionUsing(fn (array $data): int => (int) Tag::query()->create($data)->getKey()),
                         ])
                         ->action(static::applyTagsToRecords(...))
+                        ->visible(! $tagsHidden)
                         ->deselectRecordsAfterCompletion(),
 
                     DeleteBulkAction::make(),
@@ -184,6 +211,7 @@ class ShortUrlsTable
                     Action::make('qr')
                         ->label(__('filament-short-url::resources/short-url.actions.qr').' (Q)')
                         ->icon('heroicon-o-qr-code')
+                        ->visible(! $qrDesignerHidden)
                         ->keyBindings(['q'])
                         ->modalHeading(__('filament-short-url::resources/short-url.actions.qr'))
                         ->modalContent(fn (ShortUrl $record) => view('filament-short-url::components.qr-download', [
@@ -195,15 +223,8 @@ class ShortUrlsTable
                         ->label(__('filament-short-url::resources/short-url.actions.copy').' (I)')
                         ->icon('heroicon-o-clipboard-document')
                         ->keyBindings(['i'])
-                        ->extraAttributes(fn (ShortUrl $record): array => [
-                            'x-on:click' => 'navigator.clipboard.writeText('.json_encode($record->fullUrl()).')',
-                        ])
-                        ->action(function (): void {
-                            Notification::make()
-                                ->title(__('filament-short-url::resources/short-url.actions.copied'))
-                                ->success()
-                                ->send();
-                        }),
+                        ->alpineClickHandler(fn (ShortUrl $record): string => 'window.navigator.clipboard.writeText('.static::jsQuote($record->fullUrl()).');'
+                            .'$tooltip('.static::jsQuote(__('filament-short-url::resources/short-url.actions.copied')).', { theme: $store.theme, timeout: 2000 })'),
                     EditAction::make()
                         ->label(__('filament-short-url::resources/short-url.actions.edit').' (E)')
                         ->keyBindings(['e']),
@@ -243,5 +264,17 @@ class ShortUrlsTable
         foreach ($records as $record) {
             $record->tags()->syncWithoutDetaching($data['tag_ids'] ?? []);
         }
+    }
+
+    /**
+     * Single-quoted JS string literal for embedding in an `x-on:click`
+     * attribute. Filament's own attribute rendering escapes `"` to `\"`
+     * (correct for HTML, but the browser never un-escapes that back to a
+     * bare quote for JS) — so a double-quoted `json_encode()` string always
+     * breaks. Single quotes sidestep it entirely since only `"` is escaped.
+     */
+    protected static function jsQuote(string $value): string
+    {
+        return "'".str_replace(['\\', "'"], ['\\\\', "\\'"], $value)."'";
     }
 }

@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Hash;
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\CreateShortUrl;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\EditShortUrl;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\AuditTimeline;
 use JeffersonGoncalves\Filament\ShortUrl\Tests\Factories\UserFactory;
 use JeffersonGoncalves\LaravelShortUrl\Contracts\SafeBrowsingChecker;
@@ -63,6 +65,27 @@ it('blocks saving a destination flagged unsafe by safe browsing', function () {
         ->call('create');
 
     expect(ShortUrl::query()->where('destination_url', 'https://malware.example.com/bad')->exists())->toBeFalse();
+});
+
+it('hides the security section when disabled on the plugin', function () {
+    FilamentShortUrlPlugin::get()->hideSecurity();
+
+    livewire(CreateShortUrl::class)
+        ->assertSuccessful()
+        ->assertFormFieldDoesNotExist('password');
+
+    FilamentShortUrlPlugin::get()->hideSecurity(false);
+});
+
+it('hides the password column from the table when security is disabled', function () {
+    FilamentShortUrlPlugin::get()->hideSecurity();
+
+    ShortUrl::factory()->create();
+
+    livewire(ListShortUrls::class)
+        ->assertTableColumnHidden('is_protected');
+
+    FilamentShortUrlPlugin::get()->hideSecurity(false);
 });
 
 it('shows audit log entries on the edit page', function () {

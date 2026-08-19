@@ -2,29 +2,97 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Schemas;
 
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Unique;
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\PixelResource\Schemas\PixelForm;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\QrDesigner;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\RuleBuilder;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\SplitSlider;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\UtmBuilder;
+use JeffersonGoncalves\LaravelShortUrl\Models\Pixel;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
+use JeffersonGoncalves\LaravelShortUrl\Registries\PixelProviderRegistry;
 
 class ShortUrlForm
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema->schema([
+            ...static::essentials(),
+            ...static::targeting(),
+            ...static::security(),
+            ...static::tracking(),
+            ...static::qr(),
+            ...static::deepLink(),
+            ...static::utm(),
+            ...static::pixels(),
+        ]);
+    }
+
+    /**
+     * @return array<int, Step>
+     */
+    public static function steps(): array
+    {
+        $steps = [
+            Step::make('essentials')
+                ->label(__('filament-short-url::resources/short-url.wizard.essentials'))
+                ->schema(static::essentials()),
+        ];
+
+        $targeting = static::targeting();
+
+        if ($targeting !== []) {
+            $steps[] = Step::make('targeting')
+                ->label(__('filament-short-url::resources/short-url.wizard.targeting'))
+                ->schema($targeting);
+        }
+
+        $securityTracking = [...static::security(), ...static::tracking()];
+
+        if ($securityTracking !== []) {
+            $steps[] = Step::make('security')
+                ->label(__('filament-short-url::resources/short-url.wizard.security_tracking'))
+                ->schema($securityTracking);
+        }
+
+        $qrDeepLink = [...static::qr(), ...static::deepLink()];
+
+        if ($qrDeepLink !== []) {
+            $steps[] = Step::make('qr')
+                ->label(__('filament-short-url::resources/short-url.wizard.qr_deep_link'))
+                ->schema($qrDeepLink);
+        }
+
+        $utmPixels = [...static::utm(), ...static::pixels()];
+
+        if ($utmPixels !== []) {
+            $steps[] = Step::make('utm')
+                ->label(__('filament-short-url::resources/short-url.wizard.utm_pixels'))
+                ->schema($utmPixels);
+        }
+
+        return $steps;
+    }
+
+    /**
+     * @return array<int, Component>
+     */
+    protected static function essentials(): array
+    {
+        return [
             TextInput::make('destination_url')
                 ->label(__('filament-short-url::resources/short-url.fields.destination_url'))
                 ->required()
@@ -48,10 +116,14 @@ class ShortUrlForm
 
             TextInput::make('url_key')
                 ->label(__('filament-short-url::resources/short-url.fields.url_key'))
-                ->helperText(__('filament-short-url::resources/short-url.fields.url_key_helper'))
+                ->helperText(fn (?ShortUrl $record): string => $record?->exists
+                    ? __('filament-short-url::resources/short-url.fields.url_key_locked_helper')
+                    : __('filament-short-url::resources/short-url.fields.url_key_helper'))
                 ->nullable()
                 ->alphaDash()
                 ->maxLength(64)
+                ->disabled(fn (?ShortUrl $record): bool => $record !== null && $record->exists)
+                ->dehydrated(fn (?ShortUrl $record): bool => $record === null || ! $record->exists)
                 ->unique(
                     table: (new ShortUrl)->getTable(),
                     column: 'url_key',
@@ -99,7 +171,19 @@ class ShortUrlForm
             DateTimePicker::make('expires_at')
                 ->label(__('filament-short-url::resources/short-url.fields.expires_at'))
                 ->nullable(),
+        ];
+    }
 
+    /**
+     * @return array<int, Component>
+     */
+    protected static function targeting(): array
+    {
+        if (FilamentShortUrlPlugin::get()->isTargetingHidden()) {
+            return [];
+        }
+
+        return [
             Select::make('destination_type')
                 ->label(__('filament-short-url::resources/short-url.fields.destination_type'))
                 ->options([
@@ -119,7 +203,19 @@ class ShortUrlForm
             SplitSlider::make('rotation_variants')
                 ->visible(fn (Get $get): bool => $get('destination_type') === 'split')
                 ->columnSpanFull(),
+        ];
+    }
 
+    /**
+     * @return array<int, Component>
+     */
+    protected static function security(): array
+    {
+        if (FilamentShortUrlPlugin::get()->isSecurityHidden()) {
+            return [];
+        }
+
+        return [
             Section::make(__('filament-short-url::resources/short-url.security.section'))
                 ->columnSpanFull()
                 ->columns(2)
@@ -155,7 +251,15 @@ class ShortUrlForm
                         ->dehydrated(false)
                         ->visible(fn (?ShortUrl $record): bool => $record?->exists && $record->safe_browsing_status !== null),
                 ]),
+        ];
+    }
 
+    /**
+     * @return array<int, Component>
+     */
+    protected static function tracking(): array
+    {
+        return [
             Section::make(__('filament-short-url::resources/short-url.tracking.section'))
                 ->columnSpanFull()
                 ->columns(3)
@@ -170,14 +274,39 @@ class ShortUrlForm
                     Toggle::make('track_referer_url')->label(__('filament-short-url::resources/short-url.tracking.track_referer_url'))->default(true),
                     Toggle::make('track_browser_language')->label(__('filament-short-url::resources/short-url.tracking.track_browser_language'))->default(true),
                 ]),
+        ];
+    }
 
+    /**
+     * @return array<int, Component>
+     */
+    protected static function qr(): array
+    {
+        if (FilamentShortUrlPlugin::get()->isQrDesignerHidden()) {
+            return [];
+        }
+
+        return [
             Section::make(__('filament-short-url::resources/short-url.qr.section'))
+                ->description(__('filament-short-url::resources/short-url.qr.section_description'))
                 ->columnSpanFull()
                 ->collapsed()
                 ->schema([
                     QrDesigner::make('qr_design'),
                 ]),
+        ];
+    }
 
+    /**
+     * @return array<int, Component>
+     */
+    protected static function deepLink(): array
+    {
+        if (FilamentShortUrlPlugin::get()->isDeepLinkingHidden()) {
+            return [];
+        }
+
+        return [
             Section::make(__('filament-short-url::resources/short-url.deep_link.section'))
                 ->columnSpanFull()
                 ->columns(2)
@@ -198,22 +327,61 @@ class ShortUrlForm
                             'destinationUrl' => $get('destination_url'),
                         ]),
                 ]),
+        ];
+    }
 
+    /**
+     * @return array<int, Component>
+     */
+    protected static function utm(): array
+    {
+        if (FilamentShortUrlPlugin::get()->isUtmHidden()) {
+            return [];
+        }
+
+        return [
             Section::make(__('filament-short-url::resources/short-url.utm.section'))
                 ->columnSpanFull()
                 ->collapsed()
                 ->schema([
                     UtmBuilder::make(),
                 ]),
+        ];
+    }
 
+    /**
+     * @return array<int, Component>
+     */
+    protected static function pixels(): array
+    {
+        if (FilamentShortUrlPlugin::get()->isPixelsHidden()) {
+            return [];
+        }
+
+        return [
             Section::make(__('filament-short-url::resources/short-url.pixels.section'))
                 ->columnSpanFull()
                 ->schema([
-                    CheckboxList::make('pixels')
+                    Select::make('pixels')
                         ->label(__('filament-short-url::resources/short-url.pixels.field'))
                         ->relationship('pixels', 'name')
-                        ->columns(2),
+                        ->multiple()
+                        ->preload()
+                        ->createOptionForm(PixelForm::fields())
+                        ->createOptionUsing(function (array $data): int {
+                            $provider = app(PixelProviderRegistry::class)->get($data['provider_key'] ?? '');
+                            $config = [];
+
+                            foreach ($provider === null ? [] : $provider->configFields as $index => $field) {
+                                $config[$field['key']] = $data["config_field_{$index}"] ?? null;
+                                unset($data["config_field_{$index}"]);
+                            }
+
+                            $data['config'] = $config;
+
+                            return (int) Pixel::query()->create($data)->getKey();
+                        }),
                 ]),
-        ]);
+        ];
     }
 }

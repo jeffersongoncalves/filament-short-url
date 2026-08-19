@@ -1,0 +1,197 @@
+{
+    "plugin": {
+        "name": "Filament Short Url",
+        "package": "jeffersongoncalves/filament-short-url"
+    },
+    "filakit": {
+        "kit": "filakitphp/basev5"
+    },
+    "install": {
+        "extra_packages": [],
+        "plugins": [
+            {
+                "class": "JeffersonGoncalves\\Filament\\ShortUrl\\FilamentShortUrlPlugin",
+                "panel": "admin"
+            }
+        ],
+        "publish": [
+            "short-url-migrations"
+        ],
+        "post_install_commands": [
+            "migrate"
+        ],
+        "env": {
+            "SHORT_URL_API_ENABLED": "true",
+            "SHORT_URL_DOMAINS_ENABLED": "true",
+            "SHORT_URL_BIO_ENABLED": "true"
+        }
+    },
+    "seed": {
+        "auto_detect": true,
+        "user": {
+            "email": "admin@example.com",
+            "password": "password",
+            "name": "Admin User"
+        },
+        "models": [
+            {
+                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\ApiKey",
+                "count": 10
+            },
+            {
+                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\BioPage",
+                "count": 10
+            },
+            {
+                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\CustomDomain",
+                "count": 10
+            },
+            {
+                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\Folder",
+                "count": 10
+            },
+            {
+                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\Pixel",
+                "count": 10
+            },
+            {
+                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\ShortUrl",
+                "count": 1,
+                "attributes": {
+                    "url_key": "screentest-demo"
+                }
+            },
+            {
+                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\Tag",
+                "count": 10
+            },
+            {
+                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\Webhook",
+                "count": 10
+            }
+        ]
+    },
+    "screenshots": [
+        {
+            "name": "metrics-page",
+            "url": "/admin/metrics-page"
+        },
+        {
+            "name": "settings-page",
+            "url": "/admin/settings-page"
+        },
+        {
+            "name": "import-page",
+            "url": "/admin/import-page"
+        },
+        {
+            "name": "apikey-list",
+            "url": "/admin/api-keys"
+        },
+        {
+            "name": "apikey-create",
+            "url": "/admin/api-keys/create"
+        },
+        {
+            "name": "apikey-edit",
+            "url": "/admin/api-keys/1/edit"
+        },
+        {
+            "name": "biopage-list",
+            "url": "/admin/bio-pages"
+        },
+        {
+            "name": "biopage-create",
+            "url": "/admin/bio-pages/create"
+        },
+        {
+            "name": "biopage-edit",
+            "url": "/admin/bio-pages/1/edit"
+        },
+        {
+            "name": "customdomain-list",
+            "url": "/admin/custom-domains"
+        },
+        {
+            "name": "customdomain-create",
+            "url": "/admin/custom-domains/create"
+        },
+        {
+            "name": "customdomain-edit",
+            "url": "/admin/custom-domains/1/edit"
+        },
+        {
+            "name": "folder-list",
+            "url": "/admin/folders"
+        },
+        {
+            "name": "folder-create",
+            "url": "/admin/folders/create"
+        },
+        {
+            "name": "folder-edit",
+            "url": "/admin/folders/1/edit"
+        },
+        {
+            "name": "pixel-list",
+            "url": "/admin/pixels"
+        },
+        {
+            "name": "pixel-create",
+            "url": "/admin/pixels/create"
+        },
+        {
+            "name": "pixel-edit",
+            "url": "/admin/pixels/1/edit"
+        },
+        {
+            "name": "shorturl-list",
+            "url": "/admin/short-urls"
+        },
+        {
+            "name": "shorturl-create",
+            "url": "/admin/short-urls/create"
+        },
+        {
+            "name": "shorturl-edit",
+            "url": "/admin/short-urls/screentest-demo/edit"
+        },
+        {
+            "name": "tag-list",
+            "url": "/admin/tags"
+        },
+        {
+            "name": "tag-create",
+            "url": "/admin/tags/create"
+        },
+        {
+            "name": "tag-edit",
+            "url": "/admin/tags/1/edit"
+        },
+        {
+            "name": "webhook-list",
+            "url": "/admin/webhooks"
+        },
+        {
+            "name": "webhook-create",
+            "url": "/admin/webhooks/create"
+        },
+        {
+            "name": "webhook-edit",
+            "url": "/admin/webhooks/1/edit"
+        }
+    ],
+    "output": {
+        "directory": "screenshots",
+        "themes": [
+            "light",
+            "dark"
+        ],
+        "format": "png"
+    },
+    "readme": {
+        "update": true,
+        "section_marker": "<!-- SCREENSHOTS -->",
+        "template": "table"
+    }
+}

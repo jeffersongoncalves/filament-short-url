@@ -1,5 +1,6 @@
 <?php
 
+use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\CreateShortUrl;
 use JeffersonGoncalves\Filament\ShortUrl\Tests\Factories\UserFactory;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
@@ -27,6 +28,16 @@ it('syncs utm fields into the destination url query string', function () {
 
     expect($shortUrl->destination_url)->toContain('utm_source=newsletter')
         ->and($shortUrl->destination_url)->toContain('utm_medium=email');
+});
+
+it('hides the utm section when disabled on the plugin', function () {
+    FilamentShortUrlPlugin::get()->hideUtm();
+
+    livewire(CreateShortUrl::class)
+        ->assertSuccessful()
+        ->assertFormFieldDoesNotExist('utm_source');
+
+    FilamentShortUrlPlugin::get()->hideUtm(false);
 });
 
 it('reads utm params back out of a pasted destination url', function () {

@@ -3,19 +3,21 @@
     $formats = ['svg' => 'SVG', 'png' => 'PNG', 'pdf' => 'PDF', 'eps' => 'EPS'];
 @endphp
 
-<div class="space-y-3">
+<div class="fi-su-dns">
     @if (! $available)
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="fi-su-qr-preview-empty">
             {{ __('filament-short-url::resources/short-url.qr.package_missing') }}
         </p>
     @else
-        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        @include('filament-short-url::components.qr-preview', ['design' => $record->qr_design ?? [], 'previewUrl' => $record->fullUrl()])
+
+        <div class="fi-su-qr-formats">
             @foreach ($formats as $format => $label)
                 <a
                     href="{{ route('short-url.qr', ['urlKey' => $record->url_key, 'format' => $format]) }}"
                     target="_blank"
                     rel="noopener"
-                    class="flex items-center justify-center rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700"
+                    class="fi-su-qr-format-link"
                 >
                     {{ $label }}
                 </a>

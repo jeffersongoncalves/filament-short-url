@@ -1,21 +1,21 @@
 <x-filament-widgets::widget>
     <x-filament::section :heading="$heading">
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div class="fi-su-funnel-grid">
             @foreach (['source' => $source, 'medium' => $medium, 'campaign' => $campaign] as $key => $stats)
                 <div>
-                    <h4 class="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <h4 class="fi-su-funnel-col-title">
                         {{ __("filament-short-url::resources/short-url.stats.utm_{$key}") }}
                     </h4>
                     @if ($stats === [])
-                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                        <p class="fi-su-empty-text">
                             {{ __('filament-short-url::resources/short-url.stats.no_data') }}
                         </p>
                     @else
-                        <ul class="space-y-1">
+                        <ul class="fi-su-funnel-list">
                             @foreach ($stats as $label => $count)
-                                <li class="flex items-center justify-between text-sm">
-                                    <span class="truncate text-gray-700 dark:text-gray-200">{{ $label !== '' ? $label : __('filament-short-url::resources/short-url.stats.unknown') }}</span>
-                                    <span class="font-medium text-gray-950 dark:text-white">{{ $count }}</span>
+                                <li class="fi-su-funnel-item">
+                                    <span class="fi-su-funnel-label">{{ $label !== '' ? $label : __('filament-short-url::resources/short-url.stats.unknown') }}</span>
+                                    <span class="fi-su-funnel-count">{{ $count }}</span>
                                 </li>
                             @endforeach
                         </ul>

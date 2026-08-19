@@ -17,6 +17,7 @@ class QrDesigner
         return Group::make([
             Select::make('dotsStyle')
                 ->label(__('filament-short-url::resources/short-url.qr.dots_style'))
+                ->helperText(__('filament-short-url::resources/short-url.qr.dots_style_helper'))
                 ->options([
                     'square' => __('filament-short-url::resources/short-url.qr.style_square'),
                     'dots' => __('filament-short-url::resources/short-url.qr.style_dots'),
@@ -29,6 +30,7 @@ class QrDesigner
 
             Select::make('eyesStyle')
                 ->label(__('filament-short-url::resources/short-url.qr.eyes_style'))
+                ->helperText(__('filament-short-url::resources/short-url.qr.eyes_style_helper'))
                 ->options([
                     'square' => __('filament-short-url::resources/short-url.qr.style_square'),
                     'dots' => __('filament-short-url::resources/short-url.qr.style_dots'),

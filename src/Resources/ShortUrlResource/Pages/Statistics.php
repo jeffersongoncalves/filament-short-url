@@ -19,6 +19,7 @@ use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\Refe
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\StatsOverview;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\UtmFunnel;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Widgets\VariantsChart;
+use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 class Statistics extends Page
 {
@@ -37,9 +38,49 @@ class Statistics extends Page
         $this->to = now()->toDateString();
     }
 
+    public function getTitle(): string
+    {
+        $record = $this->getRecordForTitle();
+
+        return filled($record->title) ? $record->title : $record->fullUrl();
+    }
+
+    protected function getRecordForTitle(): ShortUrl
+    {
+        /** @var ShortUrl $record */
+        $record = $this->getRecord();
+
+        return $record;
+    }
+
+    /**
+     * Single-quoted JS string literal for embedding in an `x-on:click`
+     * attribute. Filament's own attribute rendering escapes `"` to `\"`
+     * (correct for HTML, but the browser never un-escapes that back to a
+     * bare quote for JS) — so a double-quoted `json_encode()` string always
+     * breaks. Single quotes sidestep it entirely since only `"` is escaped.
+     */
+    protected static function jsQuote(string $value): string
+    {
+        return "'".str_replace(['\\', "'"], ['\\\\', "\\'"], $value)."'";
+    }
+
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('edit')
+                ->label(__('filament-short-url::resources/short-url.actions.edit'))
+                ->icon('heroicon-o-pencil-square')
+                ->color('gray')
+                ->url(fn (): string => ShortUrlResource::getUrl('edit', ['record' => $this->getRecord()])),
+
+            Action::make('copy')
+                ->label(__('filament-short-url::resources/short-url.actions.copy'))
+                ->icon('heroicon-o-clipboard-document')
+                ->color('gray')
+                ->alpineClickHandler(fn (): string => 'window.navigator.clipboard.writeText('.static::jsQuote($this->getRecordForTitle()->fullUrl()).');'
+                    .'$tooltip('.static::jsQuote(__('filament-short-url::resources/short-url.actions.copied')).', { theme: $store.theme, timeout: 2000 })'),
+
             Action::make('period')
                 ->label(__('filament-short-url::resources/short-url.stats.period'))
                 ->icon('heroicon-o-calendar')
