@@ -27,7 +27,9 @@ it('previews and imports a csv file', function () {
 
     $component = livewire(ImportPage::class)
         ->set('data.driver', 'csv')
-        ->set('data.file', 'short-url-imports/links.csv')
+        // Filament v3's FileUpload keeps its live state as a UUID-keyed
+        // array rather than a plain string.
+        ->set('data.file', ['fake-upload-uuid' => 'short-url-imports/links.csv'])
         ->call('runPreview');
 
     expect($component->get('preview')['totalRows'])->toBe(2);

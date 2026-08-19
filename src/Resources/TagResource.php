@@ -2,18 +2,22 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources;
 
-use BackedEnum;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource\Pages\CreateTag;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource\Pages\EditTag;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource\Pages\ListTags;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource\Schemas\TagForm;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource\Tables\TagsTable;
 use JeffersonGoncalves\LaravelShortUrl\Models\Tag;
 
 class TagResource extends Resource
@@ -22,16 +26,49 @@ class TagResource extends Resource
 
     protected static ?string $model = Tag::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    public static function form(Schema $schema): Schema
+    public static function form(Form $form): Form
     {
-        return TagForm::configure($schema);
+        return $form->schema(static::fields());
+    }
+
+    /**
+     * @return array<int, Component>
+     */
+    public static function fields(): array
+    {
+        return [
+            TextInput::make('name')
+                ->label(__('filament-short-url::resources/tag.fields.name'))
+                ->required()
+                ->maxLength(255),
+
+            ColorPicker::make('color')
+                ->label(__('filament-short-url::resources/tag.fields.color')),
+        ];
     }
 
     public static function table(Table $table): Table
     {
-        return TagsTable::configure($table);
+        return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->withCount('shortUrls'))
+            ->columns([
+                TextColumn::make('name')
+                    ->label(__('filament-short-url::resources/tag.fields.name'))
+                    ->searchable(),
+
+                ColorColumn::make('color')
+                    ->label(__('filament-short-url::resources/tag.fields.color')),
+
+                TextColumn::make('short_urls_count')
+                    ->label(__('filament-short-url::resources/tag.fields.links_count'))
+                    ->badge(),
+            ])
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(),
+            ]);
     }
 
     public static function canViewAny(): bool

@@ -2,8 +2,8 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource\Widgets;
 
-use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -44,7 +44,7 @@ class WebhookDeliveries extends TableWidget
                     ->dateTime()
                     ->since(),
             ])
-            ->recordActions([
+            ->actions([
                 Action::make('view_payload')
                     ->label(__('filament-short-url::resources/webhook.deliveries.view_payload'))
                     ->icon('heroicon-o-code-bracket')

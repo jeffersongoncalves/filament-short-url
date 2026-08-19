@@ -2,18 +2,16 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Pages;
 
-use BackedEnum;
-use Filament\Actions\Action;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Actions as ActionsComponent;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Actions as ActionsComponent;
-use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -31,7 +29,9 @@ class SettingsPage extends Page
 {
     use HasPluginNavigationGroup;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+
+    protected static string $view = 'filament-short-url::pages.settings';
 
     public array $data = [];
 
@@ -71,11 +71,11 @@ class SettingsPage extends Page
         return __('filament-short-url::resources/settings.title');
     }
 
-    public function content(Schema $schema): Schema
+    public function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->statePath('data')
-            ->components([
+            ->schema([
                 Tabs::make('settings')
                     ->tabs($this->buildTabs()),
 

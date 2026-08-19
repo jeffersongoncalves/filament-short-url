@@ -2,15 +2,15 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages;
 
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
-use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Concerns\HandlesManagerExceptions;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Concerns\HashesPassword;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Schemas\ShortUrlForm;
 use JeffersonGoncalves\LaravelShortUrl\ShortUrlManager;
 
 class CreateShortUrl extends CreateRecord
@@ -21,20 +21,26 @@ class CreateShortUrl extends CreateRecord
 
     protected static string $resource = ShortUrlResource::class;
 
-    public function form(Schema $schema): Schema
+    public function form(Form $form): Form
     {
         if (! FilamentShortUrlPlugin::get()->isWizardFormEnabled()) {
-            return parent::form($schema);
+            return parent::form($form);
         }
 
-        return $schema
-            ->columns(null)
-            ->components([$this->getWizardComponent()]);
+        return $form
+            ->schema([
+                Wizard::make($this->getSteps())
+                    ->startOnStep($this->getStartStep())
+                    ->cancelAction($this->getCancelFormAction())
+                    ->submitAction($this->getSubmitFormAction())
+                    ->skippable($this->hasSkippableSteps()),
+            ])
+            ->columns(null);
     }
 
     public function getSteps(): array
     {
-        return ShortUrlForm::steps();
+        return ShortUrlResource::steps();
     }
 
     protected function hasSkippableSteps(): bool

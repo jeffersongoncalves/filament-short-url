@@ -4,11 +4,11 @@ namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\
 
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Slider;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Get;
 
 class QrDesigner
 {
@@ -45,9 +45,11 @@ class QrDesigner
                 ->default('M')
                 ->live(),
 
-            Slider::make('margin')
+            TextInput::make('margin')
                 ->label(__('filament-short-url::resources/short-url.qr.margin'))
-                ->range(0, 50)
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(50)
                 ->default(0)
                 ->live(),
 
@@ -71,9 +73,11 @@ class QrDesigner
                 ->directory('short-url-qr-logos')
                 ->live(),
 
-            Slider::make('logoSizePercent')
+            TextInput::make('logoSizePercent')
                 ->label(__('filament-short-url::resources/short-url.qr.logo_size'))
-                ->range(5, 40)
+                ->numeric()
+                ->minValue(5)
+                ->maxValue(40)
                 ->default(20)
                 ->visible(fn (Get $get): bool => filled($get('logoPath')))
                 ->live(),

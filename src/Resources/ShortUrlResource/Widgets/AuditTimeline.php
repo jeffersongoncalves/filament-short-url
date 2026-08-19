@@ -13,7 +13,7 @@ class AuditTimeline extends Widget
     /**
      * @var view-string
      */
-    protected string $view = 'filament-short-url::widgets.audit-timeline';
+    protected static string $view = 'filament-short-url::widgets.audit-timeline';
 
     protected int|string|array $columnSpan = 'full';
 

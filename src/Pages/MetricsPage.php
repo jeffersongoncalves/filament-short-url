@@ -2,9 +2,7 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Pages;
 
-use BackedEnum;
 use Filament\Pages\Page;
-use Filament\Support\Icons\Heroicon;
 use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
@@ -25,7 +23,9 @@ class MetricsPage extends Page
 {
     use HasPluginNavigationGroup;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
+    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+
+    protected static string $view = 'filament-short-url::pages.metrics';
 
     // Filament's own default for an unsorted nav item is -1 (see
     // NavigationItem::getSort()), so -1 here would just tie with every

@@ -2,9 +2,9 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl;
 
-use BackedEnum;
 use Closure;
 use Filament\Contracts\Plugin;
+use Filament\Facades\Filament;
 use Filament\Panel;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\ImportPage;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\MetricsPage;
@@ -36,7 +36,7 @@ class FilamentShortUrlPlugin implements Plugin
 
     protected ?string $navigationLabel = null;
 
-    protected string|BackedEnum|null $navigationIcon = null;
+    protected ?string $navigationIcon = null;
 
     protected ?int $navigationSort = null;
 
@@ -119,8 +119,18 @@ class FilamentShortUrlPlugin implements Plugin
 
     public static function get(): static
     {
+        $id = app(static::class)->getId();
+
+        // Filament v3's global `filament()`/`getPlugin()` helper only looks at
+        // the "current" panel, which isn't set yet while a panel is still
+        // registering itself (eg. Resource::getPages() runs eagerly during
+        // Panel::register(), before Filament::setCurrentPanel() is called).
+        // Falling back to the default panel mirrors what later Filament
+        // versions do natively via getCurrentOrDefaultPanel().
+        $panel = Filament::getCurrentPanel() ?? Filament::getDefaultPanel();
+
         /** @var static $plugin */
-        $plugin = filament(app(static::class)->getId());
+        $plugin = $panel->getPlugin($id);
 
         return $plugin;
     }
@@ -154,7 +164,7 @@ class FilamentShortUrlPlugin implements Plugin
         return $this;
     }
 
-    public function navigationIcon(string|BackedEnum|null $icon): static
+    public function navigationIcon(?string $icon): static
     {
         $this->navigationIcon = $icon;
 

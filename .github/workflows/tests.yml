@@ -10,10 +10,10 @@ name: Tests
 on:
   push:
     branches:
-      - 3.x
+      - 1.x
   pull_request:
     branches:
-      - 3.x
+      - 1.x
 
 jobs:
   tests:
@@ -23,6 +23,10 @@ jobs:
       fail-fast: true
       matrix:
         php: [8.3, 8.4]
+        # NOTE: not [8.1, 8.2, 8.3] — jeffersongoncalves/laravel-short-url v1.3.0
+        # (the only tagged release, required by this plugin's composer.json)
+        # itself requires php ^8.3, so 8.1/8.2 cannot install regardless of
+        # Filament v3's own (lower) php ^8.1 floor.
         stability: [prefer-stable]
 
     name: PHP ${{ matrix.php }} - ${{ matrix.stability }}

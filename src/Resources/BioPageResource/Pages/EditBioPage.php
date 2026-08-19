@@ -6,7 +6,6 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\BioPageResource;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\BioPageResource\Tables\BioPagesTable;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\BioPageResource\Widgets\BlockAnalytics;
 use JeffersonGoncalves\LaravelShortUrl\Models\BioPage;
 
@@ -21,7 +20,7 @@ class EditBioPage extends EditRecord
                 ->label(__('filament-short-url::resources/bio-page.actions.preview'))
                 ->icon('heroicon-o-eye')
                 ->color('gray')
-                ->url(fn (BioPage $record): string => BioPagesTable::previewUrl($record))
+                ->url(fn (BioPage $record): string => BioPageResource::previewUrl($record))
                 ->openUrlInNewTab(),
             DeleteAction::make(),
         ];

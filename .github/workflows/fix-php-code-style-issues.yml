@@ -3,7 +3,7 @@ name: Fix PHP code style issues
 on:
   push:
     branches:
-      - 3.x
+      - 1.x
     paths:
       - '**.php'
 

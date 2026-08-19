@@ -1,7 +1,7 @@
 <?php
 
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Statistics;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Tables\ShortUrlsTable;
 
 function callJsQuote(string $class, string $value): string
 {
@@ -22,7 +22,7 @@ it('produces a single-quoted JS literal that survives Filament\'s " -> \" attrib
 });
 
 it('produces a single-quoted JS literal that survives Filament\'s " -> \" attribute escaping on ShortUrlsTable', function () {
-    $quoted = callJsQuote(ShortUrlsTable::class, 'http://shorturlkit.test/fid6mku');
+    $quoted = callJsQuote(ShortUrlResource::class, 'http://shorturlkit.test/fid6mku');
 
     expect($quoted)->toBe("'http://shorturlkit.test/fid6mku'");
 
@@ -38,7 +38,7 @@ it('escapes embedded single quotes and backslashes on Statistics', function () {
 });
 
 it('escapes embedded single quotes and backslashes on ShortUrlsTable', function () {
-    $quoted = callJsQuote(ShortUrlsTable::class, "it's a \\test\\");
+    $quoted = callJsQuote(ShortUrlResource::class, "it's a \\test\\");
 
     expect($quoted)->toBe("'it\\'s a \\\\test\\\\'");
 });

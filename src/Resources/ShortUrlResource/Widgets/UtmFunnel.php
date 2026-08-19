@@ -12,7 +12,7 @@ class UtmFunnel extends Widget
     /**
      * @var view-string
      */
-    protected string $view = 'filament-short-url::widgets.utm-funnel';
+    protected static string $view = 'filament-short-url::widgets.utm-funnel';
 
     protected int|string|array $columnSpan = 'full';
 

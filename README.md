@@ -1,18 +1,18 @@
 <div class="filament-hidden">
 
-![Filament Short URL](https://raw.githubusercontent.com/jeffersongoncalves/filament-short-url/3.x/art/jeffersongoncalves-filament-short-url.png)
+![Filament Short URL](https://raw.githubusercontent.com/jeffersongoncalves/filament-short-url/1.x/art/jeffersongoncalves-filament-short-url.png)
 
 </div>
 
 # Filament Short URL
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/jeffersongoncalves/filament-short-url.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/filament-short-url)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/filament-short-url/tests.yml?branch=3.x&label=tests&style=flat-square)](https://github.com/jeffersongoncalves/filament-short-url/actions?query=workflow%3Atests+branch%3A3.x)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/filament-short-url/fix-php-code-style-issues.yml?branch=3.x&label=code%20style&style=flat-square)](https://github.com/jeffersongoncalves/filament-short-url/actions?query=workflow%3A%22Fix+PHP+code+style+issues%22+branch%3A3.x)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/filament-short-url/tests.yml?branch=1.x&label=tests&style=flat-square)](https://github.com/jeffersongoncalves/filament-short-url/actions?query=workflow%3Atests+branch%3A1.x)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/filament-short-url/fix-php-code-style-issues.yml?branch=1.x&label=code%20style&style=flat-square)](https://github.com/jeffersongoncalves/filament-short-url/actions?query=workflow%3A%22Fix+PHP+code+style+issues%22+branch%3A1.x)
 [![Total Downloads](https://img.shields.io/packagist/dt/jeffersongoncalves/filament-short-url.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/filament-short-url)
 [![License](https://img.shields.io/packagist/l/jeffersongoncalves/filament-short-url.svg?style=flat-square)](LICENSE.md)
 
-A complete Filament v5 admin layer for
+A complete Filament v3 admin layer for
 [`jeffersongoncalves/laravel-short-url`](https://github.com/jeffersongoncalves/laravel-short-url) — the headless
 core package that owns the models, migrations, redirect pipeline, tracking and every business rule. This package
 duplicates none of that: it's the presentation layer (Resources, Pages and Filament components) built on top of
@@ -22,6 +22,8 @@ the core's Facade and contracts.
 
 | `filament-short-url` | `laravel-short-url` | Filament |
 | --- | --- | --- |
+| `1.x` | `^1.3` | `v3` |
+| `2.x` | `^1.3` | `v4` |
 | `3.x` | `^1.3` | `v5` |
 
 ## What's included
@@ -86,7 +88,7 @@ the core's Facade and contracts.
 ### 1. Install the package
 
 ```bash
-composer require jeffersongoncalves/filament-short-url:"^3.0"
+composer require jeffersongoncalves/filament-short-url:"^1.0"
 ```
 
 This pulls in `jeffersongoncalves/laravel-short-url` (`^1.3`) as a dependency.

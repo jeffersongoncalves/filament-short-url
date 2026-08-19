@@ -2,16 +2,15 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Pages;
 
-use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\View;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\View;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\LaravelShortUrl\Registries\ImporterDriverRegistry;
@@ -27,7 +26,9 @@ class ImportPage extends Page
 {
     use HasPluginNavigationGroup;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpTray;
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-up-tray';
+
+    protected static string $view = 'filament-short-url::pages.import';
 
     public array $data = [
         'driver' => null,
@@ -51,11 +52,11 @@ class ImportPage extends Page
         return __('filament-short-url::resources/import.title');
     }
 
-    public function content(Schema $schema): Schema
+    public function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->statePath('data')
-            ->components([
+            ->schema([
                 Select::make('driver')
                     ->label(__('filament-short-url::resources/import.driver'))
                     ->options(fn (): array => collect(app(ImporterDriverRegistry::class)->names())
@@ -80,7 +81,7 @@ class ImportPage extends Page
                     ->required(fn (Get $get): bool => filled($get('driver')) && $get('driver') !== 'csv'),
 
                 View::make('filament-short-url::pages.import-results')
-                    ->view('filament-short-url::pages.import-results', fn (): array => [
+                    ->viewData(fn (): array => [
                         'preview' => $this->preview,
                         'report' => $this->report,
                     ]),
@@ -137,6 +138,13 @@ class ImportPage extends Page
     {
         if (($this->data['driver'] ?? null) === 'csv') {
             $path = $this->data['file'] ?? null;
+
+            // Filament v3's FileUpload keeps its live Livewire state as a
+            // UUID-keyed array (`['uuid' => 'path']`) rather than a plain
+            // string, unlike later Filament versions.
+            if (is_array($path)) {
+                $path = Arr::first($path);
+            }
 
             return $path ? Storage::disk('local')->path($path) : '';
         }

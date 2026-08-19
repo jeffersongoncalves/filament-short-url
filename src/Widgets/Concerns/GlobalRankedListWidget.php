@@ -11,7 +11,7 @@ abstract class GlobalRankedListWidget extends Widget
     /**
      * @var view-string
      */
-    protected string $view = 'filament-short-url::widgets.ranked-list';
+    protected static string $view = 'filament-short-url::widgets.ranked-list';
 
     protected int|string|array $columnSpan = 1;
 

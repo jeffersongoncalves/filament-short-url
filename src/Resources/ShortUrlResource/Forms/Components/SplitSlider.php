@@ -3,14 +3,14 @@
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components;
 
 use Closure;
-use Filament\Actions\Action;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Actions as ActionsComponent;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Actions as ActionsComponent;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 
 /**
  * A/B/n weighted rotation editor for `rotation_variants` (or a nested

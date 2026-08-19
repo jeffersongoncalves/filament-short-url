@@ -12,7 +12,7 @@ class VariantsChart extends Widget
     /**
      * @var view-string
      */
-    protected string $view = 'filament-short-url::widgets.variants-chart';
+    protected static string $view = 'filament-short-url::widgets.variants-chart';
 
     protected int|string|array $columnSpan = 'full';
 

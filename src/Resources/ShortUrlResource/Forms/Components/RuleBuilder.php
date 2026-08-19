@@ -3,13 +3,13 @@
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components;
 
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Get;
 use JeffersonGoncalves\LaravelShortUrl\Registries\FilterTypeRegistry;
 
 /**

@@ -8,7 +8,7 @@ abstract class PieStatWidget extends ChartWidget
 {
     use HasStatsPayload;
 
-    protected ?string $heading = null;
+    protected static ?string $heading = null;
 
     protected string $chartType = 'doughnut';
 
@@ -21,7 +21,7 @@ abstract class PieStatWidget extends ChartWidget
 
     public function getHeading(): ?string
     {
-        return $this->heading;
+        return static::$heading;
     }
 
     protected function getData(): array

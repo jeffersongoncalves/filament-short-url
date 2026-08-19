@@ -27,6 +27,8 @@ class Statistics extends Page
 
     protected static string $resource = ShortUrlResource::class;
 
+    protected static string $view = 'filament-short-url::pages.statistics';
+
     public ?string $from = null;
 
     public ?string $to = null;
@@ -78,13 +80,15 @@ class Statistics extends Page
                 ->label(__('filament-short-url::resources/short-url.actions.copy'))
                 ->icon('heroicon-o-clipboard-document')
                 ->color('gray')
-                ->alpineClickHandler(fn (): string => 'window.navigator.clipboard.writeText('.static::jsQuote($this->getRecordForTitle()->fullUrl()).');'
-                    .'$tooltip('.static::jsQuote(__('filament-short-url::resources/short-url.actions.copied')).', { theme: $store.theme, timeout: 2000 })'),
+                ->extraAttributes(fn (): array => [
+                    'x-on:click' => 'window.navigator.clipboard.writeText('.static::jsQuote($this->getRecordForTitle()->fullUrl()).');'
+                        .'$tooltip('.static::jsQuote(__('filament-short-url::resources/short-url.actions.copied')).', { theme: $store.theme, timeout: 2000 })',
+                ]),
 
             Action::make('period')
                 ->label(__('filament-short-url::resources/short-url.stats.period'))
                 ->icon('heroicon-o-calendar')
-                ->schema([
+                ->form([
                     DatePicker::make('from')
                         ->label(__('filament-short-url::resources/short-url.stats.from'))
                         ->maxDate(fn (): Carbon => now())
