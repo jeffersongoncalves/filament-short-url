@@ -1,3 +1,9 @@
+<div class="filament-hidden">
+
+![Filament Short URL](https://raw.githubusercontent.com/jeffersongoncalves/filament-short-url/3.x/art/jeffersongoncalves-filament-short-url.png)
+
+</div>
+
 # Filament Short URL
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/jeffersongoncalves/filament-short-url.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/filament-short-url)
@@ -5,8 +11,6 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/filament-short-url/fix-php-code-style-issues.yml?branch=3.x&label=code%20style&style=flat-square)](https://github.com/jeffersongoncalves/filament-short-url/actions?query=workflow%3A%22Fix+PHP+code+style+issues%22+branch%3A3.x)
 [![Total Downloads](https://img.shields.io/packagist/dt/jeffersongoncalves/filament-short-url.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/filament-short-url)
 [![License](https://img.shields.io/packagist/l/jeffersongoncalves/filament-short-url.svg?style=flat-square)](LICENSE.md)
-
-![Filament Short URL](banners/filament-short-url.png)
 
 A complete Filament v5 admin layer for
 [`jeffersongoncalves/laravel-short-url`](https://github.com/jeffersongoncalves/laravel-short-url) — the headless
