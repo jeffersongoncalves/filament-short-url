@@ -22,7 +22,7 @@ the core's Facade and contracts.
 
 | `filament-short-url` | `laravel-short-url` | Filament |
 | --- | --- | --- |
-| `3.x` | `^1.2` | `v5` |
+| `3.x` | `^1.3` | `v5` |
 
 ## What's included
 
@@ -39,6 +39,10 @@ the core's Facade and contracts.
 - **Import** — CSV and Bitly drivers (from the core), with a dry-run preview before importing.
 - **Metrics** — a dedicated page with totals, plan usage vs. limit, and a medium/source/campaign breakdown,
   rendering the core's `StatsPayload`/`StatsAggregator` exclusively (no stats math happens in this package).
+- **Per-link Statistics** — a detail page (`ShortUrlResource`'s `statistics` action/route) with a date-range
+  filter and widgets for hourly traffic, devices, browsers, operating systems, countries, cities, referrer
+  types, languages, the UTM funnel and A/B variant performance. Hidden together with the Metrics page by
+  `hideStatistics()`.
 - **Settings** — a page whose tabs are generated dynamically from the core's `SettingsRepository::schema()`.
 - Every Resource and Page shares the same navigation group (configurable, with a translated fallback).
 - pt_BR, en and es translations.
@@ -85,7 +89,7 @@ the core's Facade and contracts.
 composer require jeffersongoncalves/filament-short-url:"^3.0"
 ```
 
-This pulls in `jeffersongoncalves/laravel-short-url` (`^1.2`) as a dependency.
+This pulls in `jeffersongoncalves/laravel-short-url` (`^1.3`) as a dependency.
 
 ### 2. (Optional) Install dependencies for optional core features
 
