@@ -3,7 +3,7 @@ name: PHPStan
 on:
   push:
     branches:
-      - 3.x
+      - 2.x
     paths:
       - '**.php'
       - 'phpstan.neon.dist'
