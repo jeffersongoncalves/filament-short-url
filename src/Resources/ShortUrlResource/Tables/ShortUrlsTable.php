@@ -53,6 +53,7 @@ class ShortUrlsTable
                     ->limit(24)
                     ->tooltip(fn (ShortUrl $record): string => $record->fullUrl())
                     ->copyable()
+                    ->copyableState(fn (ShortUrl $record): string => $record->fullUrl())
                     ->copyMessage(__('filament-short-url::resources/short-url.actions.copied')),
 
                 TextColumn::make('url_key')
