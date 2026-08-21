@@ -9,14 +9,11 @@ use Filament\Panel;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\ImportPage;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\MetricsPage;
 use JeffersonGoncalves\Filament\ShortUrl\Pages\SettingsPage;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\ApiKeyResource;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\BioPageResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\CustomDomainResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\FolderResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\PixelResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\WebhookResource;
 
 class FilamentShortUrlPlugin implements Plugin
 {
@@ -24,12 +21,9 @@ class FilamentShortUrlPlugin implements Plugin
     protected array $resources = [
         ShortUrlResource::class,
         CustomDomainResource::class,
-        ApiKeyResource::class,
-        WebhookResource::class,
         PixelResource::class,
         FolderResource::class,
         TagResource::class,
-        BioPageResource::class,
     ];
 
     protected ?string $navigationGroup = null;
@@ -46,13 +40,7 @@ class FilamentShortUrlPlugin implements Plugin
 
     protected bool $statisticsHidden = false;
 
-    protected bool $bioPagesHidden = false;
-
     protected bool $wizardForm = false;
-
-    protected bool $qrDesignerHidden = false;
-
-    protected bool $deepLinkingHidden = false;
 
     protected bool $securityHidden = false;
 
@@ -61,8 +49,6 @@ class FilamentShortUrlPlugin implements Plugin
     protected bool $pixelsHidden = false;
 
     protected bool $targetingHidden = false;
-
-    protected bool $webhooksHidden = false;
 
     protected bool $foldersHidden = false;
 
@@ -91,9 +77,6 @@ class FilamentShortUrlPlugin implements Plugin
             $this->resources,
             fn (string $resource): bool => match ($resource) {
                 CustomDomainResource::class => (bool) config('short-url.domains.enabled', false),
-                ApiKeyResource::class => (bool) config('short-url.api.enabled', false),
-                BioPageResource::class => (bool) config('short-url.bio.enabled', false) && ! $this->bioPagesHidden,
-                WebhookResource::class => ! $this->webhooksHidden,
                 FolderResource::class => ! $this->foldersHidden,
                 TagResource::class => ! $this->tagsHidden,
                 default => true,
@@ -204,18 +187,6 @@ class FilamentShortUrlPlugin implements Plugin
         return $this->statisticsHidden;
     }
 
-    public function hideBioPages(bool $hidden = true): static
-    {
-        $this->bioPagesHidden = $hidden;
-
-        return $this;
-    }
-
-    public function isBioPagesHidden(): bool
-    {
-        return $this->bioPagesHidden;
-    }
-
     public function wizardForm(bool $enabled = true): static
     {
         $this->wizardForm = $enabled;
@@ -226,30 +197,6 @@ class FilamentShortUrlPlugin implements Plugin
     public function isWizardFormEnabled(): bool
     {
         return $this->wizardForm;
-    }
-
-    public function hideQrDesigner(bool $hidden = true): static
-    {
-        $this->qrDesignerHidden = $hidden;
-
-        return $this;
-    }
-
-    public function isQrDesignerHidden(): bool
-    {
-        return $this->qrDesignerHidden;
-    }
-
-    public function hideDeepLinking(bool $hidden = true): static
-    {
-        $this->deepLinkingHidden = $hidden;
-
-        return $this;
-    }
-
-    public function isDeepLinkingHidden(): bool
-    {
-        return $this->deepLinkingHidden;
     }
 
     public function hideSecurity(bool $hidden = true): static
@@ -309,18 +256,6 @@ class FilamentShortUrlPlugin implements Plugin
         return $this->targetingHidden;
     }
 
-    public function hideWebhooks(bool $hidden = true): static
-    {
-        $this->webhooksHidden = $hidden;
-
-        return $this;
-    }
-
-    public function isWebhooksHidden(): bool
-    {
-        return $this->webhooksHidden;
-    }
-
     public function hideFolders(bool $hidden = true): static
     {
         $this->foldersHidden = $hidden;
@@ -346,20 +281,17 @@ class FilamentShortUrlPlugin implements Plugin
     }
 
     /**
-     * Convenience toggle: hides every optional/advanced form section (QR
-     * design, deep linking, security, UTM, pixels, rule/split targeting)
-     * and the Webhooks resource in one call, leaving just the essentials
-     * and tracking toggles — for installs that only need "shorten a link".
+     * Convenience toggle: hides every optional/advanced form section
+     * (security, UTM, pixels, rule/split targeting) in one call, leaving
+     * just the essentials and tracking toggles — for installs that only
+     * need "shorten a link".
      */
     public function simpleMode(bool $enabled = true): static
     {
-        $this->hideQrDesigner($enabled);
-        $this->hideDeepLinking($enabled);
         $this->hideSecurity($enabled);
         $this->hideUtm($enabled);
         $this->hidePixels($enabled);
         $this->hideTargeting($enabled);
-        $this->hideWebhooks($enabled);
 
         return $this;
     }

@@ -34,7 +34,6 @@ class ShortUrlsTable
     public static function configure(Table $table): Table
     {
         $statisticsHidden = FilamentShortUrlPlugin::get()->isStatisticsHidden();
-        $qrDesignerHidden = FilamentShortUrlPlugin::get()->isQrDesignerHidden();
         $securityHidden = FilamentShortUrlPlugin::get()->isSecurityHidden();
         $foldersHidden = FilamentShortUrlPlugin::get()->isFoldersHidden();
         $tagsHidden = FilamentShortUrlPlugin::get()->isTagsHidden();
@@ -86,12 +85,6 @@ class ShortUrlsTable
                 TextColumn::make('total_visits')
                     ->label(__('filament-short-url::resources/short-url.fields.total_visits'))
                     ->badge(),
-
-                TextColumn::make('qr_scans')
-                    ->label(__('filament-short-url::resources/short-url.fields.qr_scans'))
-                    ->badge()
-                    ->color('gray')
-                    ->visible(! $qrDesignerHidden),
 
                 ViewColumn::make('last_visited_at')
                     ->label(__('filament-short-url::resources/short-url.fields.last_visited_at'))
@@ -208,17 +201,6 @@ class ShortUrlsTable
                         ->visible(! $statisticsHidden)
                         ->keyBindings(['s'])
                         ->url(fn (ShortUrl $record): string => ShortUrlResource::getUrl('statistics', ['record' => $record])),
-                    Action::make('qr')
-                        ->label(__('filament-short-url::resources/short-url.actions.qr').' (Q)')
-                        ->icon('heroicon-o-qr-code')
-                        ->visible(! $qrDesignerHidden)
-                        ->keyBindings(['q'])
-                        ->modalHeading(__('filament-short-url::resources/short-url.actions.qr'))
-                        ->modalContent(fn (ShortUrl $record) => view('filament-short-url::components.qr-download', [
-                            'record' => $record,
-                        ]))
-                        ->modalSubmitAction(false)
-                        ->modalCancelActionLabel(__('filament-short-url::resources/custom-domain.actions.close')),
                     Action::make('copy')
                         ->label(__('filament-short-url::resources/short-url.actions.copy').' (I)')
                         ->icon('heroicon-o-clipboard-document')

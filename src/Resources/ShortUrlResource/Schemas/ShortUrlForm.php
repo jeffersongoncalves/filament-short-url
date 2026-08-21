@@ -7,7 +7,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -17,7 +16,6 @@ use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Unique;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\PixelResource\Schemas\PixelForm;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\QrDesigner;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\RuleBuilder;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\SplitSlider;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\UtmBuilder;
@@ -34,8 +32,6 @@ class ShortUrlForm
             ...static::targeting(),
             ...static::security(),
             ...static::tracking(),
-            ...static::qr(),
-            ...static::deepLink(),
             ...static::utm(),
             ...static::pixels(),
         ]);
@@ -66,14 +62,6 @@ class ShortUrlForm
             $steps[] = Step::make('security')
                 ->label(__('filament-short-url::resources/short-url.wizard.security_tracking'))
                 ->schema($securityTracking);
-        }
-
-        $qrDeepLink = [...static::qr(), ...static::deepLink()];
-
-        if ($qrDeepLink !== []) {
-            $steps[] = Step::make('qr')
-                ->label(__('filament-short-url::resources/short-url.wizard.qr_deep_link'))
-                ->schema($qrDeepLink);
         }
 
         $utmPixels = [...static::utm(), ...static::pixels()];
@@ -273,59 +261,6 @@ class ShortUrlForm
                     Toggle::make('track_device_type')->label(__('filament-short-url::resources/short-url.tracking.track_device_type'))->default(true),
                     Toggle::make('track_referer_url')->label(__('filament-short-url::resources/short-url.tracking.track_referer_url'))->default(true),
                     Toggle::make('track_browser_language')->label(__('filament-short-url::resources/short-url.tracking.track_browser_language'))->default(true),
-                ]),
-        ];
-    }
-
-    /**
-     * @return array<int, Component>
-     */
-    protected static function qr(): array
-    {
-        if (FilamentShortUrlPlugin::get()->isQrDesignerHidden()) {
-            return [];
-        }
-
-        return [
-            Section::make(__('filament-short-url::resources/short-url.qr.section'))
-                ->description(__('filament-short-url::resources/short-url.qr.section_description'))
-                ->columnSpanFull()
-                ->collapsed()
-                ->schema([
-                    QrDesigner::make('qr_design'),
-                ]),
-        ];
-    }
-
-    /**
-     * @return array<int, Component>
-     */
-    protected static function deepLink(): array
-    {
-        if (FilamentShortUrlPlugin::get()->isDeepLinkingHidden()) {
-            return [];
-        }
-
-        return [
-            Section::make(__('filament-short-url::resources/short-url.deep_link.section'))
-                ->columnSpanFull()
-                ->columns(2)
-                ->schema([
-                    Toggle::make('auto_open_app_mobile')
-                        ->label(__('filament-short-url::resources/short-url.deep_link.auto_open'))
-                        ->default(false),
-
-                    TextInput::make('app_scheme_override')
-                        ->label(__('filament-short-url::resources/short-url.deep_link.scheme_override'))
-                        ->helperText(__('filament-short-url::resources/short-url.deep_link.scheme_override_helper')),
-
-                    ViewField::make('deep_link_preview')
-                        ->label(__('filament-short-url::resources/short-url.deep_link.matched_app'))
-                        ->dehydrated(false)
-                        ->columnSpanFull()
-                        ->view('filament-short-url::components.deep-link-preview', fn (Get $get): array => [
-                            'destinationUrl' => $get('destination_url'),
-                        ]),
                 ]),
         ];
     }
