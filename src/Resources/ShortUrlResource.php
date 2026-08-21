@@ -10,7 +10,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -36,7 +35,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Validation\Rules\Unique;
 use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
-use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\QrDesigner;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\RuleBuilder;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\SplitSlider;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Forms\Components\UtmBuilder;
@@ -65,8 +63,6 @@ class ShortUrlResource extends Resource
             ...static::targeting(),
             ...static::security(),
             ...static::tracking(),
-            ...static::qr(),
-            ...static::deepLink(),
             ...static::utm(),
             ...static::pixels(),
         ]);
@@ -97,14 +93,6 @@ class ShortUrlResource extends Resource
             $steps[] = Step::make('security')
                 ->label(__('filament-short-url::resources/short-url.wizard.security_tracking'))
                 ->schema($securityTracking);
-        }
-
-        $qrDeepLink = [...static::qr(), ...static::deepLink()];
-
-        if ($qrDeepLink !== []) {
-            $steps[] = Step::make('qr')
-                ->label(__('filament-short-url::resources/short-url.wizard.qr_deep_link'))
-                ->schema($qrDeepLink);
         }
 
         $utmPixels = [...static::utm(), ...static::pixels()];
@@ -311,59 +299,6 @@ class ShortUrlResource extends Resource
     /**
      * @return array<int, Component>
      */
-    protected static function qr(): array
-    {
-        if (FilamentShortUrlPlugin::get()->isQrDesignerHidden()) {
-            return [];
-        }
-
-        return [
-            Section::make(__('filament-short-url::resources/short-url.qr.section'))
-                ->description(__('filament-short-url::resources/short-url.qr.section_description'))
-                ->columnSpanFull()
-                ->collapsed()
-                ->schema([
-                    QrDesigner::make('qr_design'),
-                ]),
-        ];
-    }
-
-    /**
-     * @return array<int, Component>
-     */
-    protected static function deepLink(): array
-    {
-        if (FilamentShortUrlPlugin::get()->isDeepLinkingHidden()) {
-            return [];
-        }
-
-        return [
-            Section::make(__('filament-short-url::resources/short-url.deep_link.section'))
-                ->columnSpanFull()
-                ->columns(2)
-                ->schema([
-                    Toggle::make('auto_open_app_mobile')
-                        ->label(__('filament-short-url::resources/short-url.deep_link.auto_open'))
-                        ->default(false),
-
-                    TextInput::make('app_scheme_override')
-                        ->label(__('filament-short-url::resources/short-url.deep_link.scheme_override'))
-                        ->helperText(__('filament-short-url::resources/short-url.deep_link.scheme_override_helper')),
-
-                    ViewField::make('deep_link_preview')
-                        ->label(__('filament-short-url::resources/short-url.deep_link.matched_app'))
-                        ->dehydrated(false)
-                        ->columnSpanFull()
-                        ->view('filament-short-url::components.deep-link-preview', fn (Get $get): array => [
-                            'destinationUrl' => $get('destination_url'),
-                        ]),
-                ]),
-        ];
-    }
-
-    /**
-     * @return array<int, Component>
-     */
     protected static function utm(): array
     {
         if (FilamentShortUrlPlugin::get()->isUtmHidden()) {
@@ -419,7 +354,6 @@ class ShortUrlResource extends Resource
     public static function table(Table $table): Table
     {
         $statisticsHidden = FilamentShortUrlPlugin::get()->isStatisticsHidden();
-        $qrDesignerHidden = FilamentShortUrlPlugin::get()->isQrDesignerHidden();
         $securityHidden = FilamentShortUrlPlugin::get()->isSecurityHidden();
         $foldersHidden = FilamentShortUrlPlugin::get()->isFoldersHidden();
         $tagsHidden = FilamentShortUrlPlugin::get()->isTagsHidden();
@@ -471,12 +405,6 @@ class ShortUrlResource extends Resource
                 TextColumn::make('total_visits')
                     ->label(__('filament-short-url::resources/short-url.fields.total_visits'))
                     ->badge(),
-
-                TextColumn::make('qr_scans')
-                    ->label(__('filament-short-url::resources/short-url.fields.qr_scans'))
-                    ->badge()
-                    ->color('gray')
-                    ->visible(! $qrDesignerHidden),
 
                 ViewColumn::make('last_visited_at')
                     ->label(__('filament-short-url::resources/short-url.fields.last_visited_at'))
@@ -593,17 +521,6 @@ class ShortUrlResource extends Resource
                         ->visible(! $statisticsHidden)
                         ->keyBindings(['s'])
                         ->url(fn (ShortUrl $record): string => static::getUrl('statistics', ['record' => $record])),
-                    Action::make('qr')
-                        ->label(__('filament-short-url::resources/short-url.actions.qr').' (Q)')
-                        ->icon('heroicon-o-qr-code')
-                        ->visible(! $qrDesignerHidden)
-                        ->keyBindings(['q'])
-                        ->modalHeading(__('filament-short-url::resources/short-url.actions.qr'))
-                        ->modalContent(fn (ShortUrl $record) => view('filament-short-url::components.qr-download', [
-                            'record' => $record,
-                        ]))
-                        ->modalSubmitAction(false)
-                        ->modalCancelActionLabel(__('filament-short-url::resources/custom-domain.actions.close')),
                     Action::make('copy')
                         ->label(__('filament-short-url::resources/short-url.actions.copy').' (I)')
                         ->icon('heroicon-o-clipboard-document')

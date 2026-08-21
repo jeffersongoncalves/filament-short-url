@@ -46,8 +46,7 @@ it('archives short urls in bulk', function () {
 it('moves short urls to a folder using the resource query directly', function () {
     // Regression coverage for the move_to_folder bulk action's mutation logic,
     // without driving it through Filament's bulk-action-with-form modal cycle
-    // (see the requiresConfirmation() note in ApiKeyResourceTest — the same
-    // Filament v5 partial-render bug reproduces for any modal-form action).
+    // (a Filament v5 partial-render bug reproduces for any modal-form action).
     $folder = Folder::factory()->create();
     $urls = ShortUrl::factory()->count(2)->create();
 
