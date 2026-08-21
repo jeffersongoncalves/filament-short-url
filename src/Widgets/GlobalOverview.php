@@ -4,7 +4,6 @@ namespace JeffersonGoncalves\Filament\ShortUrl\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 class GlobalOverview extends BaseWidget
@@ -25,13 +24,6 @@ class GlobalOverview extends BaseWidget
                 ShortUrl::query()->sum('unique_visits'),
             ),
         ];
-
-        if (! FilamentShortUrlPlugin::get()->isQrDesignerHidden()) {
-            $stats[] = Stat::make(
-                __('filament-short-url::resources/short-url.dashboard.total_qr_scans'),
-                ShortUrl::query()->sum('qr_scans'),
-            );
-        }
 
         return $stats;
     }

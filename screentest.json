@@ -21,9 +21,7 @@
             "migrate"
         ],
         "env": {
-            "SHORT_URL_API_ENABLED": "true",
-            "SHORT_URL_DOMAINS_ENABLED": "true",
-            "SHORT_URL_BIO_ENABLED": "true"
+            "SHORT_URL_DOMAINS_ENABLED": "true"
         }
     },
     "seed": {
@@ -34,14 +32,6 @@
             "name": "Admin User"
         },
         "models": [
-            {
-                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\ApiKey",
-                "count": 10
-            },
-            {
-                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\BioPage",
-                "count": 10
-            },
             {
                 "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\CustomDomain",
                 "count": 10
@@ -64,10 +54,6 @@
             {
                 "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\Tag",
                 "count": 10
-            },
-            {
-                "model": "JeffersonGoncalves\\LaravelShortUrl\\Models\\Webhook",
-                "count": 10
             }
         ]
     },
@@ -83,30 +69,6 @@
         {
             "name": "import-page",
             "url": "/admin/import-page"
-        },
-        {
-            "name": "apikey-list",
-            "url": "/admin/api-keys"
-        },
-        {
-            "name": "apikey-create",
-            "url": "/admin/api-keys/create"
-        },
-        {
-            "name": "apikey-edit",
-            "url": "/admin/api-keys/1/edit"
-        },
-        {
-            "name": "biopage-list",
-            "url": "/admin/bio-pages"
-        },
-        {
-            "name": "biopage-create",
-            "url": "/admin/bio-pages/create"
-        },
-        {
-            "name": "biopage-edit",
-            "url": "/admin/bio-pages/1/edit"
         },
         {
             "name": "customdomain-list",
@@ -167,18 +129,6 @@
         {
             "name": "tag-edit",
             "url": "/admin/tags/1/edit"
-        },
-        {
-            "name": "webhook-list",
-            "url": "/admin/webhooks"
-        },
-        {
-            "name": "webhook-create",
-            "url": "/admin/webhooks/create"
-        },
-        {
-            "name": "webhook-edit",
-            "url": "/admin/webhooks/1/edit"
         }
     ],
     "output": {

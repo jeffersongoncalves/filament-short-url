@@ -22,22 +22,19 @@ the core's Facade and contracts.
 
 | `filament-short-url` | `laravel-short-url` | Filament |
 | --- | --- | --- |
-| `1.x` | `^1.3` | `v3` |
-| `2.x` | `^1.3` | `v4` |
-| `3.x` | `^1.3` | `v5` |
+| `1.x` | `^2.0` | `v3` |
+| `2.x` | `^2.0` | `v4` |
+| `3.x` | `^2.0` | `v5` |
 
 ## What's included
 
 - **Short URLs** — full CRUD, rule-based targeting (a Rule Builder driven dynamically by the core's
   `FilterTypeRegistry`), A/B split, password/warning-page/Safe Browsing, granular tracking toggles, a
-  bidirectional UTM Builder (template application + per-field requirement via `short-url.utm.required`), QR
-  Designer, Deep Link Preview, pixels.
+  bidirectional UTM Builder (template application + per-field requirement via `short-url.utm.required`), pixels.
 - **Custom Domains** — DNS verification (TXT/CNAME), per-registrar instructions.
-- **API Keys** and **Webhooks** — key generation/rotation, delivery history with replay.
 - **Folders**, **Tags**, **Pixels** — organization and integrations, generated dynamically from the core's own
   registries (`PixelProviderRegistry`, etc.) — registering something new in the core makes it show up here
   without touching this package.
-- **Bio Pages** — block builder (link/text/image/video) via `Repeater::relationship()`.
 - **Import** — CSV and Bitly drivers (from the core), with a dry-run preview before importing.
 - **Metrics** — a dedicated page with totals, plan usage vs. limit, and a medium/source/campaign breakdown,
   rendering the core's `StatsPayload`/`StatsAggregator` exclusively (no stats math happens in this package).
@@ -57,12 +54,6 @@ the core's Facade and contracts.
 | Metrics page | ![metrics-page](screenshots/light/metrics-page.png) | ![metrics-page](screenshots/dark/metrics-page.png) |
 | Settings page | ![settings-page](screenshots/light/settings-page.png) | ![settings-page](screenshots/dark/settings-page.png) |
 | Import page | ![import-page](screenshots/light/import-page.png) | ![import-page](screenshots/dark/import-page.png) |
-| API key list | ![apikey-list](screenshots/light/apikey-list.png) | ![apikey-list](screenshots/dark/apikey-list.png) |
-| API key create | ![apikey-create](screenshots/light/apikey-create.png) | ![apikey-create](screenshots/dark/apikey-create.png) |
-| API key edit | ![apikey-edit](screenshots/light/apikey-edit.png) | ![apikey-edit](screenshots/dark/apikey-edit.png) |
-| Bio page list | ![biopage-list](screenshots/light/biopage-list.png) | ![biopage-list](screenshots/dark/biopage-list.png) |
-| Bio page create | ![biopage-create](screenshots/light/biopage-create.png) | ![biopage-create](screenshots/dark/biopage-create.png) |
-| Bio page edit | ![biopage-edit](screenshots/light/biopage-edit.png) | ![biopage-edit](screenshots/dark/biopage-edit.png) |
 | Custom domain list | ![customdomain-list](screenshots/light/customdomain-list.png) | ![customdomain-list](screenshots/dark/customdomain-list.png) |
 | Custom domain create | ![customdomain-create](screenshots/light/customdomain-create.png) | ![customdomain-create](screenshots/dark/customdomain-create.png) |
 | Custom domain edit | ![customdomain-edit](screenshots/light/customdomain-edit.png) | ![customdomain-edit](screenshots/dark/customdomain-edit.png) |
@@ -78,9 +69,6 @@ the core's Facade and contracts.
 | Tag list | ![tag-list](screenshots/light/tag-list.png) | ![tag-list](screenshots/dark/tag-list.png) |
 | Tag create | ![tag-create](screenshots/light/tag-create.png) | ![tag-create](screenshots/dark/tag-create.png) |
 | Tag edit | ![tag-edit](screenshots/light/tag-edit.png) | ![tag-edit](screenshots/dark/tag-edit.png) |
-| Webhook list | ![webhook-list](screenshots/light/webhook-list.png) | ![webhook-list](screenshots/dark/webhook-list.png) |
-| Webhook create | ![webhook-create](screenshots/light/webhook-create.png) | ![webhook-create](screenshots/dark/webhook-create.png) |
-| Webhook edit | ![webhook-edit](screenshots/light/webhook-edit.png) | ![webhook-edit](screenshots/dark/webhook-edit.png) |
 <!-- SCREENSHOTS -->
 
 ## Installation
@@ -91,19 +79,16 @@ the core's Facade and contracts.
 composer require jeffersongoncalves/filament-short-url:"^3.0"
 ```
 
-This pulls in `jeffersongoncalves/laravel-short-url` (`^1.3`) as a dependency.
+This pulls in `jeffersongoncalves/laravel-short-url` (`^2.0`) as a dependency.
 
 ### 2. (Optional) Install dependencies for optional core features
 
 | Feature | Dependency |
 | --- | --- |
-| QR codes (SVG/PNG) | `composer require endroid/qr-code` |
-| QR codes (PDF/EPS) | on top of the above, `composer require setasign/fpdf` |
 | Automatic multi-tenancy | `composer require stancl/tenancy` |
 | GeoIP via MaxMind | `composer require geoip2/geoip2` |
 
-Without them, the corresponding features degrade gracefully (e.g. the QR Designer shows a notice instead of
-crashing) — none of these are ever required.
+Without them, the corresponding features degrade gracefully — none of these are ever required.
 
 ### 3. Publish and run the core's migrations
 
@@ -140,13 +125,10 @@ public function panel(Panel $panel): Panel
                 ->navigationIcon('heroicon-o-link')
                 ->navigationSort(50)
                 ->wizardForm()                            // opt-in: Create AND Edit pages become a skippable step wizard
-                ->hideQrDesigner()                        // drop the QR Code Design section from the form
-                ->hideDeepLinking()                       // drop the Deep Linking section from the form
                 ->hideSecurity()                          // drop the Security section (password/warning page)
                 ->hideUtm()                                // drop the UTM Parameters section
                 ->hidePixels()                             // drop the Pixels section
                 ->hideTargeting()                          // drop rule-based/A-B split targeting — links become single-destination only
-                ->hideWebhooks()                           // removes WebhookResource entirely
                 ->hideFolders()                            // removes FolderResource + the folder filter/bulk action
                 ->hideTags()                                // removes TagResource + the tags filter/bulk action
                 ->authorizeUsing(fn () => auth()->user()->hasRole('admin'))
@@ -155,13 +137,12 @@ public function panel(Panel $panel): Panel
                     \JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource::class,
                     // ...enable only the ones you want; see the full list below
                 ])
-                ->hideStatistics()   // removes the Metrics page and the statistics action/column
-                ->hideBioPages(),    // removes BioPageResource even if short-url.bio.enabled is true
+                ->hideStatistics(),  // removes the Metrics page and the statistics action/column
         ]);
 }
 ```
 
-For installs that only need "shorten a link" — no QR, deep linking, security, UTM, pixels, targeting or webhooks — chain
+For installs that only need "shorten a link" — no security, UTM, pixels or targeting — chain
 `->simpleMode()` instead of the individual `hideX()` calls above; it turns all of them on at once (pass `false` to turn
 them all back off).
 
@@ -173,14 +154,11 @@ php artisan filament:assets
 
 ### 6. (Optional) Turn on optional core features via `.env`
 
-Custom domains, the REST API and Bio Pages are core features that are off by default — the corresponding
-Resources (`CustomDomainResource`, `ApiKeyResource`, `BioPageResource`) only show up in navigation once the
-core has them enabled:
+Custom domains are a core feature that is off by default — the corresponding Resource (`CustomDomainResource`)
+only shows up in navigation once the core has it enabled:
 
 ```env
 SHORT_URL_DOMAINS_ENABLED=true
-SHORT_URL_API_ENABLED=true
-SHORT_URL_BIO_ENABLED=true
 ```
 
 To require UTM parameters on every created link (e.g. track whether a link was shared by SMS, email, an
@@ -191,7 +169,7 @@ SHORT_URL_REQUIRED_UTM=utm_medium
 ```
 
 This makes the field required in the Filament form itself, and is also enforced by `ShortUrlManager` on
-create/update (including through the core's own REST API, if enabled).
+create/update.
 
 ## Available Resources and Pages
 
@@ -199,11 +177,8 @@ create/update (including through the core's own REST API, if enabled).
 | --- | --- | --- |
 | `ShortUrlResource` | Short links | always |
 | `CustomDomainResource` | Custom domains | `short-url.domains.enabled` |
-| `ApiKeyResource` | REST API keys | `short-url.api.enabled` |
-| `WebhookResource` | Webhooks + delivery history | always, unless `hideWebhooks()` |
 | `PixelResource` | Conversion pixels | always |
 | `FolderResource` / `TagResource` | Link organization | always |
-| `BioPageResource` | Link-in-bio | `short-url.bio.enabled` and `! hideBioPages()` |
 | `SettingsPage` | Settings (core's schema) | always |
 | `ImportPage` | CSV/Bitly import | always |
 | `MetricsPage` | Global metrics | always, unless `hideStatistics()` |
