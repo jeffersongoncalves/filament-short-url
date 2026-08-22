@@ -51,9 +51,6 @@ the core's Facade and contracts.
 <!-- SCREENSHOTS -->
 | Screenshot | Light | Dark |
 |---|---|---|
-| Metrics page | ![metrics-page](screenshots/light/metrics-page.png) | ![metrics-page](screenshots/dark/metrics-page.png) |
-| Settings page | ![settings-page](screenshots/light/settings-page.png) | ![settings-page](screenshots/dark/settings-page.png) |
-| Import page | ![import-page](screenshots/light/import-page.png) | ![import-page](screenshots/dark/import-page.png) |
 | Custom domain list | ![customdomain-list](screenshots/light/customdomain-list.png) | ![customdomain-list](screenshots/dark/customdomain-list.png) |
 | Custom domain create | ![customdomain-create](screenshots/light/customdomain-create.png) | ![customdomain-create](screenshots/dark/customdomain-create.png) |
 | Custom domain edit | ![customdomain-edit](screenshots/light/customdomain-edit.png) | ![customdomain-edit](screenshots/dark/customdomain-edit.png) |
@@ -69,6 +66,9 @@ the core's Facade and contracts.
 | Tag list | ![tag-list](screenshots/light/tag-list.png) | ![tag-list](screenshots/dark/tag-list.png) |
 | Tag create | ![tag-create](screenshots/light/tag-create.png) | ![tag-create](screenshots/dark/tag-create.png) |
 | Tag edit | ![tag-edit](screenshots/light/tag-edit.png) | ![tag-edit](screenshots/dark/tag-edit.png) |
+| Import page | ![import-page](screenshots/light/import-page.png) | ![import-page](screenshots/dark/import-page.png) |
+| Metrics page | ![metrics-page](screenshots/light/metrics-page.png) | ![metrics-page](screenshots/dark/metrics-page.png) |
+| Settings page | ![settings-page](screenshots/light/settings-page.png) | ![settings-page](screenshots/dark/settings-page.png) |
 <!-- SCREENSHOTS -->
 
 ## Installation
