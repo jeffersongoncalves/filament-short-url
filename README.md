@@ -51,18 +51,18 @@ the core's Facade and contracts.
 <!-- SCREENSHOTS -->
 | Screenshot | Light | Dark |
 |---|---|---|
-| Custom domain list | ![customdomain-list](screenshots/light/customdomain-list.png) | ![customdomain-list](screenshots/dark/customdomain-list.png) |
-| Custom domain create | ![customdomain-create](screenshots/light/customdomain-create.png) | ![customdomain-create](screenshots/dark/customdomain-create.png) |
-| Custom domain edit | ![customdomain-edit](screenshots/light/customdomain-edit.png) | ![customdomain-edit](screenshots/dark/customdomain-edit.png) |
+| Customdomain list | ![customdomain-list](screenshots/light/customdomain-list.png) | ![customdomain-list](screenshots/dark/customdomain-list.png) |
+| Customdomain create | ![customdomain-create](screenshots/light/customdomain-create.png) | ![customdomain-create](screenshots/dark/customdomain-create.png) |
+| Customdomain edit | ![customdomain-edit](screenshots/light/customdomain-edit.png) | ![customdomain-edit](screenshots/dark/customdomain-edit.png) |
 | Folder list | ![folder-list](screenshots/light/folder-list.png) | ![folder-list](screenshots/dark/folder-list.png) |
 | Folder create | ![folder-create](screenshots/light/folder-create.png) | ![folder-create](screenshots/dark/folder-create.png) |
 | Folder edit | ![folder-edit](screenshots/light/folder-edit.png) | ![folder-edit](screenshots/dark/folder-edit.png) |
 | Pixel list | ![pixel-list](screenshots/light/pixel-list.png) | ![pixel-list](screenshots/dark/pixel-list.png) |
 | Pixel create | ![pixel-create](screenshots/light/pixel-create.png) | ![pixel-create](screenshots/dark/pixel-create.png) |
 | Pixel edit | ![pixel-edit](screenshots/light/pixel-edit.png) | ![pixel-edit](screenshots/dark/pixel-edit.png) |
-| Short URL list | ![shorturl-list](screenshots/light/shorturl-list.png) | ![shorturl-list](screenshots/dark/shorturl-list.png) |
-| Short URL create | ![shorturl-create](screenshots/light/shorturl-create.png) | ![shorturl-create](screenshots/dark/shorturl-create.png) |
-| Short URL edit | ![shorturl-edit](screenshots/light/shorturl-edit.png) | ![shorturl-edit](screenshots/dark/shorturl-edit.png) |
+| Shorturl list | ![shorturl-list](screenshots/light/shorturl-list.png) | ![shorturl-list](screenshots/dark/shorturl-list.png) |
+| Shorturl create | ![shorturl-create](screenshots/light/shorturl-create.png) | ![shorturl-create](screenshots/dark/shorturl-create.png) |
+| Shorturl edit | ![shorturl-edit](screenshots/light/shorturl-edit.png) | ![shorturl-edit](screenshots/dark/shorturl-edit.png) |
 | Tag list | ![tag-list](screenshots/light/tag-list.png) | ![tag-list](screenshots/dark/tag-list.png) |
 | Tag create | ![tag-create](screenshots/light/tag-create.png) | ![tag-create](screenshots/dark/tag-create.png) |
 | Tag edit | ![tag-edit](screenshots/light/tag-edit.png) | ![tag-edit](screenshots/dark/tag-edit.png) |
