@@ -97,7 +97,11 @@
         },
         {
             "name": "shorturl-list",
-            "url": "/admin/short-urls"
+            "url": "/admin/short-urls",
+            "before": [
+                {"action": "click", "selector": ".fi-ta-actions-cell .fi-dropdown-trigger"},
+                {"action": "wait", "delay": 300}
+            ]
         },
         {
             "name": "shorturl-create",
