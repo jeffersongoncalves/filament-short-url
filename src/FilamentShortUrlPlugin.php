@@ -54,6 +54,8 @@ class FilamentShortUrlPlugin implements Plugin
 
     protected bool $tagsHidden = false;
 
+    protected bool $importHidden = false;
+
     public function getId(): string
     {
         return 'filament-short-url';
@@ -79,11 +81,16 @@ class FilamentShortUrlPlugin implements Plugin
                 CustomDomainResource::class => (bool) config('short-url.domains.enabled', false),
                 FolderResource::class => ! $this->foldersHidden,
                 TagResource::class => ! $this->tagsHidden,
+                PixelResource::class => ! $this->pixelsHidden,
                 default => true,
             },
         ));
 
-        $pages = [SettingsPage::class, ImportPage::class];
+        $pages = [SettingsPage::class];
+
+        if (! $this->importHidden) {
+            $pages[] = ImportPage::class;
+        }
 
         if (! $this->statisticsHidden) {
             $pages[] = MetricsPage::class;
@@ -288,6 +295,18 @@ class FilamentShortUrlPlugin implements Plugin
     public function isTagsHidden(): bool
     {
         return $this->tagsHidden;
+    }
+
+    public function hideImport(bool $hidden = true): static
+    {
+        $this->importHidden = $hidden;
+
+        return $this;
+    }
+
+    public function isImportHidden(): bool
+    {
+        return $this->importHidden;
     }
 
     /**
