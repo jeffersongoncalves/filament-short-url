@@ -9,6 +9,8 @@ use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\ExpiringLinks;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalCampaignBreakdown;
+use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalCityBreakdown;
+use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalCountryBreakdown;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalMediumBreakdown;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalOverview;
 use JeffersonGoncalves\Filament\ShortUrl\Widgets\GlobalSourceBreakdown;
@@ -63,6 +65,8 @@ class MetricsPage extends Page
             GlobalMediumBreakdown::class,
             GlobalSourceBreakdown::class,
             GlobalCampaignBreakdown::class,
+            GlobalCountryBreakdown::class,
+            GlobalCityBreakdown::class,
         ];
     }
 }

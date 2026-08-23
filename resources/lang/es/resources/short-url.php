@@ -196,5 +196,7 @@ return [
         'by_medium' => 'Tráfico por Medio (30d)',
         'by_source' => 'Tráfico por Origen (30d)',
         'by_campaign' => 'Tráfico por Campaña (30d)',
+        'by_country' => 'Tráfico por País (30d)',
+        'by_city' => 'Tráfico por Ciudad (30d)',
     ],
 ];
