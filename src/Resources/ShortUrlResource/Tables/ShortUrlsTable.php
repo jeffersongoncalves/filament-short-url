@@ -196,23 +196,19 @@ class ShortUrlsTable
             ->recordActions([
                 ActionGroup::make([
                     Action::make('statistics')
-                        ->label(__('filament-short-url::resources/short-url.actions.statistics').' (S)')
+                        ->label(__('filament-short-url::resources/short-url.actions.statistics'))
                         ->icon('heroicon-o-chart-bar')
                         ->visible(! $statisticsHidden)
-                        ->keyBindings(['s'])
                         ->url(fn (ShortUrl $record): string => ShortUrlResource::getUrl('statistics', ['record' => $record])),
                     Action::make('copy')
-                        ->label(__('filament-short-url::resources/short-url.actions.copy').' (I)')
+                        ->label(__('filament-short-url::resources/short-url.actions.copy'))
                         ->icon('heroicon-o-clipboard-document')
-                        ->keyBindings(['i'])
                         ->alpineClickHandler(fn (ShortUrl $record): string => 'window.navigator.clipboard.writeText('.static::jsQuote($record->fullUrl()).');'
                             .'$tooltip('.static::jsQuote(__('filament-short-url::resources/short-url.actions.copied')).', { theme: $store.theme, timeout: 2000 })'),
                     EditAction::make()
-                        ->label(__('filament-short-url::resources/short-url.actions.edit').' (E)')
-                        ->keyBindings(['e']),
+                        ->label(__('filament-short-url::resources/short-url.actions.edit')),
                     DeleteAction::make()
-                        ->label(__('filament-short-url::resources/short-url.actions.delete').' (X)')
-                        ->keyBindings(['x']),
+                        ->label(__('filament-short-url::resources/short-url.actions.delete')),
                 ])
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->color('gray'),
