@@ -5,12 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/1.3.0...HEAD)
+## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/1.4.0...HEAD)
 
 ### Added
 
 - `ShortUrlResource` (Filament v5) for `jeffersongoncalves/laravel-short-url`: list, create and edit pages covering the F1 field set.
 - `FilamentShortUrlPlugin` with resource override and navigation group configuration.
+
+## [1.4.0](https://github.com/jeffersongoncalves/filament-short-url/compare/1.3.0...1.4.0) - 2026-08-23
+
+### Changed
+
+- Requires `jeffersongoncalves/laravel-short-url` ^4.0, which resolves [#3](https://github.com/jeffersongoncalves/filament-short-url/issues/3) at the core level: `Contracts\TenantResolver`/`Contracts\PlanResolver` replace the old `short-url.tenancy.plan_resolver` config Closure (incompatible with `config:cache`), so multi-tenant setups not using stancl/tenancy can bind their own resolver. No code changes needed in this package — `UsageOverview` only calls `PlanLimits::limit()`/`currentPlan()`, whose signatures are unchanged.
 
 ## [1.3.0](https://github.com/jeffersongoncalves/filament-short-url/compare/1.2.1...1.3.0) - 2026-08-23
 
