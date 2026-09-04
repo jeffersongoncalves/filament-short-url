@@ -152,6 +152,39 @@
 }
 
 /* ========================
+   QR Code Modal
+   ======================== */
+
+.fi-su-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.fi-su-qr-image {
+    width: 100%;
+    max-width: 16rem;
+    border-radius: 0.5rem;
+}
+
+.fi-su-qr-download {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0.5rem;
+    background-color: var(--primary-600);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+:is(.dark) .fi-su-qr-download {
+    background-color: var(--primary-500);
+}
+
+/* ========================
    Import Preview / Report
    ======================== */
 
