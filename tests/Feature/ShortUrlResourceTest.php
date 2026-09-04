@@ -160,6 +160,10 @@ it('allows access when no plugin authorization closure is set', function () {
 });
 
 it('shows the qr code table action', function () {
+    if (! extension_loaded('gd')) {
+        $this->markTestSkipped('The GD extension is required to render QR codes.');
+    }
+
     $shortUrl = ShortUrl::factory()->create();
 
     livewire(ListShortUrls::class)
