@@ -2,6 +2,7 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources;
 
+use Endroid\QrCode\Builder\Builder as QrCodeBuilder;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -30,6 +31,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Validation\Rules\Unique;
@@ -514,6 +516,20 @@ class ShortUrlResource extends Resource
                 ]),
             ])
             ->actions([
+                Action::make('qr_code')
+                    ->label(__('filament-short-url::resources/short-url.actions.qr_code'))
+                    ->icon('heroicon-o-qr-code')
+                    ->color('gray')
+                    ->visible(fn (): bool => static::qrCodeAvailable())
+                    ->modalHeading(__('filament-short-url::resources/short-url.actions.qr_code'))
+                    ->modalContent(function (ShortUrl $record): View {
+                        abort_unless(static::qrCodeAvailable(), 404);
+
+                        return view('filament-short-url::actions.qr-code-modal', [
+                            'dataUri' => $record->qrCode()->dataUri(),
+                        ]);
+                    })
+                    ->modalSubmitAction(false),
                 ActionGroup::make([
                     Action::make('statistics')
                         ->label(__('filament-short-url::resources/short-url.actions.statistics'))
@@ -535,6 +551,16 @@ class ShortUrlResource extends Resource
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->color('gray'),
             ]);
+    }
+
+    /**
+     * Whether the QR code action can actually render: the optional
+     * endroid/qr-code package must be installed, and its default PNG output
+     * needs the GD extension (Endroid's writer throws without it).
+     */
+    protected static function qrCodeAvailable(): bool
+    {
+        return class_exists(QrCodeBuilder::class) && extension_loaded('gd');
     }
 
     /**
