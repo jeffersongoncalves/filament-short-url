@@ -2,6 +2,7 @@
 
 namespace JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Tables;
 
+use Endroid\QrCode\Builder\Builder as QrCodeBuilder;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
@@ -19,6 +20,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
@@ -194,6 +196,16 @@ class ShortUrlsTable
                 ]),
             ])
             ->recordActions([
+                Action::make('qr_code')
+                    ->label(__('filament-short-url::resources/short-url.actions.qr_code'))
+                    ->icon('heroicon-o-qr-code')
+                    ->color('gray')
+                    ->visible(fn (): bool => class_exists(QrCodeBuilder::class))
+                    ->modalHeading(__('filament-short-url::resources/short-url.actions.qr_code'))
+                    ->modalContent(fn (ShortUrl $record): View => view('filament-short-url::actions.qr-code-modal', [
+                        'dataUri' => $record->qrCode()->dataUri(),
+                    ]))
+                    ->modalSubmitAction(false),
                 ActionGroup::make([
                     Action::make('statistics')
                         ->label(__('filament-short-url::resources/short-url.actions.statistics'))

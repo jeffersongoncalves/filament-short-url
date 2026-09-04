@@ -111,6 +111,8 @@ return [
         'edit' => 'Edit',
         'delete' => 'Delete',
         'export' => 'Export CSV',
+        'qr_code' => 'QR Code',
+        'qr_code_download' => 'Download',
     ],
     'pixels' => [
         'section' => 'Pixels',
