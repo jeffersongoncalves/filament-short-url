@@ -159,6 +159,13 @@ it('allows access when no plugin authorization closure is set', function () {
     livewire(ListShortUrls::class)->assertSuccessful();
 });
 
+it('shows the qr code table action', function () {
+    $shortUrl = ShortUrl::factory()->create();
+
+    livewire(ListShortUrls::class)
+        ->assertTableActionVisible('qr_code', $shortUrl);
+});
+
 it('denies access when the plugin authorization closure returns false', function () {
     FilamentShortUrlPlugin::get()->authorizeUsing(fn (): bool => false);
 
