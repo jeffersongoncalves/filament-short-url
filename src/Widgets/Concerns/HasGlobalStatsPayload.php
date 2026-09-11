@@ -17,6 +17,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
  */
 trait HasGlobalStatsPayload
 {
+    protected ?string $pollingInterval = null;
+
     protected function getGlobalPayload(): StatsPayload
     {
         $key = 'global:'.Carbon::now()->toDateString();

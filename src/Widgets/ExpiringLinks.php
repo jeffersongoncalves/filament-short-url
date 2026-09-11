@@ -9,6 +9,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 class ExpiringLinks extends TableWidget
 {
+    protected ?string $pollingInterval = null;
+
     protected int|string|array $columnSpan = 'full';
 
     public function table(Table $table): Table

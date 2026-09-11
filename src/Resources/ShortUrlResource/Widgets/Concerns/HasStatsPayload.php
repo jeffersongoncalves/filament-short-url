@@ -10,6 +10,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 trait HasStatsPayload
 {
+    protected ?string $pollingInterval = null;
+
     public ?ShortUrl $record = null;
 
     public ?string $from = null;
