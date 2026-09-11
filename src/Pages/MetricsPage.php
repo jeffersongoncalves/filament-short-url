@@ -29,6 +29,14 @@ class MetricsPage extends Page
 
     protected static string $view = 'filament-short-url::pages.metrics';
 
+    // Filament defaults an unset slug to Str::kebab(class basename) —
+    // "metrics-page" for any package's MetricsPage class. Explicit here so
+    // this doesn't collide with another plugin's own MetricsPage at the
+    // same URL in a host panel that installs both (confirmed:
+    // jeffersongoncalves/filament-page-visits ships an identically-named
+    // page).
+    protected static ?string $slug = 'short-url-metrics';
+
     // Filament's own default for an unsorted nav item is -1 (see
     // NavigationItem::getSort()), so -1 here would just tie with every
     // other unsorted resource/page and fall back to registration order.
