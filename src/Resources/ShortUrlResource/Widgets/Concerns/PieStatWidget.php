@@ -8,6 +8,8 @@ abstract class PieStatWidget extends ChartWidget
 {
     use HasStatsPayload;
 
+    protected static ?string $pollingInterval = null;
+
     protected static ?string $heading = null;
 
     protected string $chartType = 'doughnut';

@@ -9,6 +9,8 @@ class HourlyChart extends ChartWidget
 {
     use HasStatsPayload;
 
+    protected static ?string $pollingInterval = null;
+
     public function getHeading(): ?string
     {
         return __('filament-short-url::resources/short-url.stats.hourly');

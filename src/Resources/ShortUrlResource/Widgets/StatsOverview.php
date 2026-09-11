@@ -10,6 +10,8 @@ class StatsOverview extends BaseWidget
 {
     use HasStatsPayload;
 
+    protected static ?string $pollingInterval = null;
+
     protected function getStats(): array
     {
         $payload = $this->getPayload();

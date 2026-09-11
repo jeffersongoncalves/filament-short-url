@@ -8,6 +8,8 @@ abstract class RankedListWidget extends Widget
 {
     use HasStatsPayload;
 
+    protected ?string $pollingInterval = null;
+
     /**
      * @var view-string
      */

@@ -16,6 +16,8 @@ use JeffersonGoncalves\LaravelShortUrl\Tenancy\PlanLimits;
  */
 class UsageOverview extends BaseWidget
 {
+    protected static ?string $pollingInterval = null;
+
     public static function canView(): bool
     {
         return (bool) config('short-url.tenancy.enabled', false);

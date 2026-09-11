@@ -8,6 +8,8 @@ use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 class GlobalOverview extends BaseWidget
 {
+    protected static ?string $pollingInterval = null;
+
     protected function getStats(): array
     {
         $stats = [
