@@ -3,6 +3,7 @@
 namespace JeffersonGoncalves\Filament\ShortUrl\Widgets\Concerns;
 
 use Illuminate\Support\Carbon;
+use JeffersonGoncalves\Filament\ShortUrl\Support\StatsPayloadMemo;
 use JeffersonGoncalves\LaravelShortUrl\Contracts\StatsAggregator;
 use JeffersonGoncalves\LaravelShortUrl\Data\StatsPayload;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
@@ -18,14 +19,18 @@ trait HasGlobalStatsPayload
 {
     protected function getGlobalPayload(): StatsPayload
     {
-        $shortUrlIds = ShortUrl::query()->pluck('id')->all();
+        $key = 'global:'.Carbon::now()->toDateString();
 
-        return app(StatsAggregator::class)
-            ->forShortUrls($shortUrlIds)
-            ->between(
-                Carbon::now()->subDays(30)->startOfDay(),
-                Carbon::now()->endOfDay(),
-            )
-            ->get();
+        return StatsPayloadMemo::remember($key, function () {
+            $shortUrlIds = ShortUrl::query()->pluck('id')->all();
+
+            return app(StatsAggregator::class)
+                ->forShortUrls($shortUrlIds)
+                ->between(
+                    Carbon::now()->subDays(30)->startOfDay(),
+                    Carbon::now()->endOfDay(),
+                )
+                ->get();
+        });
     }
 }
