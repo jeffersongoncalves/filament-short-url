@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/3.5.3...HEAD)
+## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/3.5.4...HEAD)
 
 ### Added
 
 - `ShortUrlResource` (Filament v5) for `jeffersongoncalves/laravel-short-url`: list, create and edit pages covering the F1 field set.
 - `FilamentShortUrlPlugin` with resource override and navigation group configuration.
+
+## [3.5.4](https://github.com/jeffersongoncalves/filament-short-url/compare/3.5.3...3.5.4) - 2026-09-11
+
+Fixed: MetricsPage now has an explicit slug (short-url-metrics) instead of Filament's default (metrics-page) — collided with jeffersongoncalves/filament-page-visits' own MetricsPage in a host panel installing both.
 
 ## [3.5.3](https://github.com/jeffersongoncalves/filament-short-url/compare/3.5.2...3.5.3) - 2026-09-10
 
