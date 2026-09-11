@@ -15,6 +15,7 @@ class FilamentShortUrlServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
+            ->hasConfigFile()
             ->hasViews()
             ->hasTranslations();
     }
