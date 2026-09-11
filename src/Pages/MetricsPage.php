@@ -29,18 +29,22 @@ class MetricsPage extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
-    // Filament defaults an unset slug to Str::kebab(class basename) —
-    // "metrics-page" for any package's MetricsPage class. Explicit here so
-    // this doesn't collide with another plugin's own MetricsPage at the
-    // same URL in a host panel that installs both (confirmed:
-    // jeffersongoncalves/filament-page-visits ships an identically-named
-    // page).
-    protected static ?string $slug = 'short-url-metrics';
-
     // Filament's own default for an unsorted nav item is -1 (see
     // NavigationItem::getSort()), so -1 here would just tie with every
     // other unsorted resource/page and fall back to registration order.
     protected static ?int $navigationSort = -100;
+
+    // Filament defaults an unset slug to Str::kebab(class basename) —
+    // "metrics-page" for any package's MetricsPage class. Config-driven
+    // default here (falls back to "short-url-metrics") so this doesn't
+    // collide with another plugin's own MetricsPage at the same URL in a
+    // host panel that installs both (confirmed:
+    // jeffersongoncalves/filament-page-visits ships an identically-named
+    // page), while letting a host app override it (see issue #18).
+    public static function getDefaultSlug(): string
+    {
+        return config('filament-short-url.metrics_page.slug', 'short-url-metrics');
+    }
 
     public function getTitle(): string
     {
