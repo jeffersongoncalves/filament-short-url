@@ -171,6 +171,16 @@ SHORT_URL_REQUIRED_UTM=utm_medium
 This makes the field required in the Filament form itself, and is also enforced by `ShortUrlManager` on
 create/update.
 
+### 7. (Optional) Publish this package's own config
+
+```bash
+php artisan vendor:publish --tag="filament-short-url-config"
+```
+
+`MetricsPage`'s slug defaults to `short-url-metrics` (not Filament's usual `metrics-page`) to avoid colliding
+with another `jeffersongoncalves/*` plugin's own `MetricsPage` in a host panel that installs both. Override it
+via `config('filament-short-url.metrics_page.slug')` or `FILAMENT_SHORT_URL_METRICS_PAGE_SLUG` in `.env`.
+
 ## Available Resources and Pages
 
 | Class | What it is | Shown when |
