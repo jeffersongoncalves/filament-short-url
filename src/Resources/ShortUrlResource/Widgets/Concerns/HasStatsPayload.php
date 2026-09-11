@@ -10,13 +10,22 @@ use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 trait HasStatsPayload
 {
-    protected ?string $pollingInterval = null;
-
     public ?ShortUrl $record = null;
 
     public ?string $from = null;
 
     public ?string $to = null;
+
+    // Overriding the method (not the $pollingInterval property) avoids a
+    // fatal trait-property conflict: Filament\Widgets\Concerns\CanPoll
+    // (used by ChartWidget/StatsOverviewWidget, both extended by consumers
+    // of this trait) declares the same property with a different default
+    // ('5s'), and PHP forbids composing two same-named properties with
+    // different defaults into one class.
+    protected function getPollingInterval(): ?string
+    {
+        return null;
+    }
 
     protected function getPayload(): StatsPayload
     {

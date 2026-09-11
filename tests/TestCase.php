@@ -101,6 +101,15 @@ abstract class TestCase extends Orchestra
         $stubsPath = __DIR__.'/../vendor/jeffersongoncalves/laravel-short-url/database/migrations';
         $tempPath = sys_get_temp_dir().'/filament-short-url-migrations';
 
+        // Clear stale copies first — this dir persists across local test runs,
+        // so a renamed/removed upstream stub would otherwise leave its old
+        // copy sitting here forever, silently reintroducing whatever bug the
+        // rename fixed (see laravel-short-url's migration filename ordering
+        // fix, filament-short-url#18).
+        foreach (glob($tempPath.'/*.php') as $stale) {
+            unlink($stale);
+        }
+
         if (! is_dir($tempPath)) {
             mkdir($tempPath, 0755, true);
         }
