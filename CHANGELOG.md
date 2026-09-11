@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/3.5.6...HEAD)
+## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/3.5.7...HEAD)
 
 ### Added
 
 - `ShortUrlResource` (Filament v5) for `jeffersongoncalves/laravel-short-url`: list, create and edit pages covering the F1 field set.
 - `FilamentShortUrlPlugin` with resource override and navigation group configuration.
+
+## [3.5.7](https://github.com/jeffersongoncalves/filament-short-url/compare/3.5.6...3.5.7) - 2026-09-11
+
+**Full Changelog**: https://github.com/jeffersongoncalves/filament-short-url/compare/3.5.6...3.5.7
 
 ## [3.5.6](https://github.com/jeffersongoncalves/filament-short-url/compare/3.5.5...3.5.6) - 2026-09-11
 
