@@ -5,6 +5,8 @@ return [
         'domain' => 'Domain',
         'is_wildcard' => 'Wildcard',
         'is_wildcard_helper' => 'Also match any subdomain of this domain.',
+        'is_default' => 'Default',
+        'is_default_helper' => 'New short URLs use this domain when none is picked explicitly. Only one domain can be default; setting this clears it on any other domain. Must be verified first.',
         'root_redirect_url' => 'Root Redirect URL',
         'status' => 'Verified',
         'dns_record_type' => 'DNS Record',
@@ -14,6 +16,8 @@ return [
         'dns_instructions' => 'DNS Instructions',
         'verify_now' => 'Verify Now',
         'verify_queued' => 'Verification queued.',
+        'set_default' => 'Set as Default',
+        'set_default_success' => ':domain is now the default domain for new short URLs.',
         'close' => 'Close',
     ],
     'dns' => [

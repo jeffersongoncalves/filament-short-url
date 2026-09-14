@@ -59,3 +59,61 @@ it('dispatches a VerifyDomainJob for the verify now action', function () {
 
     Queue::assertPushed(VerifyDomainJob::class, fn (VerifyDomainJob $job): bool => $job->customDomainId === $domain->id);
 });
+
+it('disables the default toggle until the domain is verified', function () {
+    $unverified = CustomDomain::factory()->create();
+
+    livewire(EditCustomDomain::class, ['record' => $unverified->getRouteKey()])
+        ->assertFormFieldIsDisabled('is_default');
+
+    $verified = CustomDomain::factory()->verified()->create();
+
+    livewire(EditCustomDomain::class, ['record' => $verified->getRouteKey()])
+        ->assertFormFieldIsEnabled('is_default');
+});
+
+it('ignores an is_default toggle submitted while the domain is unverified', function () {
+    $unverified = CustomDomain::factory()->create();
+
+    livewire(EditCustomDomain::class, ['record' => $unverified->getRouteKey()])
+        ->fillForm(['is_default' => true])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($unverified->fresh()->is_default)->toBeFalse();
+});
+
+it('sets a verified domain as default and clears the previous default', function () {
+    $current = CustomDomain::factory()->verified()->create(['is_default' => true]);
+    $next = CustomDomain::factory()->verified()->create();
+
+    livewire(EditCustomDomain::class, ['record' => $next->getRouteKey()])
+        ->fillForm(['is_default' => true])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($next->fresh()->is_default)->toBeTrue()
+        ->and($current->fresh()->is_default)->toBeFalse();
+});
+
+it('shows the set default action only for verified, non-default domains', function () {
+    $verified = CustomDomain::factory()->verified()->create();
+    $default = CustomDomain::factory()->verified()->create(['is_default' => true]);
+    $unverified = CustomDomain::factory()->create();
+
+    livewire(ListCustomDomains::class)
+        ->assertTableActionVisible('set_default', $verified)
+        ->assertTableActionHidden('set_default', $default)
+        ->assertTableActionHidden('set_default', $unverified);
+});
+
+it('sets a domain as default via the set default table action and clears the previous default', function () {
+    $current = CustomDomain::factory()->verified()->create(['is_default' => true]);
+    $next = CustomDomain::factory()->verified()->create();
+
+    livewire(ListCustomDomains::class)
+        ->callTableAction('set_default', $next);
+
+    expect($next->fresh()->is_default)->toBeTrue()
+        ->and($current->fresh()->is_default)->toBeFalse();
+});
