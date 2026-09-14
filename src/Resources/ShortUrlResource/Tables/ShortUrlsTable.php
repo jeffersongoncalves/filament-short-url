@@ -12,6 +12,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
+use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -27,6 +29,7 @@ use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\FolderResource\Schemas\FolderForm;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\TagResource\Schemas\TagForm;
+use JeffersonGoncalves\LaravelShortUrl\Models\CustomDomain;
 use JeffersonGoncalves\LaravelShortUrl\Models\Folder;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 use JeffersonGoncalves\LaravelShortUrl\Models\Tag;
@@ -193,6 +196,19 @@ class ShortUrlsTable
                         ->visible(! $tagsHidden)
                         ->deselectRecordsAfterCompletion(),
 
+                    BulkAction::make('assign_custom_domain')
+                        ->label(__('filament-short-url::resources/short-url.bulk.assign_custom_domain'))
+                        ->icon('heroicon-o-globe-alt')
+                        ->schema([
+                            Select::make('custom_domain_id')
+                                ->label(__('filament-short-url::resources/short-url.fields.custom_domain_id'))
+                                ->options(fn (): array => CustomDomain::query()->active()->pluck('domain', 'id')->all())
+                                ->searchable(),
+                        ])
+                        ->action(static::assignCustomDomainToRecords(...))
+                        ->visible(fn (): bool => (bool) config('short-url.domains.enabled'))
+                        ->deselectRecordsAfterCompletion(),
+
                     DeleteBulkAction::make(),
                 ]),
             ])
@@ -269,6 +285,46 @@ class ShortUrlsTable
         foreach ($records as $record) {
             $record->tags()->syncWithoutDetaching($data['tag_ids'] ?? []);
         }
+    }
+
+    /**
+     * custom_domain_id is part of a unique(custom_domain_id, url_key) index, so
+     * moving a batch of records onto the same domain can collide — either with
+     * each other, or with a link already on that domain — and a raw update()
+     * would surface that as a DB constraint failure instead of a clear error.
+     *
+     * @param  Collection<int, ShortUrl>  $records
+     * @param  array<string, mixed>  $data
+     */
+    protected static function assignCustomDomainToRecords(Collection $records, array $data): void
+    {
+        $customDomainId = (int) ($data['custom_domain_id'] ?? 0);
+
+        $duplicatesWithinSelection = $records->countBy('url_key')
+            ->filter(fn (int $count): bool => $count > 1)
+            ->keys();
+
+        $conflictsWithExistingLinks = ShortUrl::query()
+            ->where('custom_domain_id', $customDomainId)
+            ->whereIn('url_key', $records->pluck('url_key'))
+            ->whereNotIn('id', $records->pluck('id'))
+            ->pluck('url_key');
+
+        $conflictingKeys = $duplicatesWithinSelection->merge($conflictsWithExistingLinks)->unique();
+
+        if ($conflictingKeys->isNotEmpty()) {
+            Notification::make()
+                ->title(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_title'))
+                ->body(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_body', [
+                    'keys' => $conflictingKeys->implode(', '),
+                ]))
+                ->danger()
+                ->send();
+
+            throw new Halt;
+        }
+
+        $records->toQuery()->update(['custom_domain_id' => $customDomainId]);
     }
 
     /**
