@@ -104,6 +104,9 @@ return [
         'unarchive' => 'Desarquivar',
         'move_to_folder' => 'Mover para Pasta',
         'apply_tags' => 'Aplicar Tags',
+        'assign_custom_domain' => 'Atribuir Domínio Personalizado',
+        'assign_custom_domain_conflict_title' => 'Chave curta já em uso nesse domínio',
+        'assign_custom_domain_conflict_body' => 'Não foi possível mover esses links — a chave curta já existe no domínio de destino (ou está duplicada dentro da seleção): :keys.',
     ],
     'actions' => [
         'statistics' => 'Estatísticas',

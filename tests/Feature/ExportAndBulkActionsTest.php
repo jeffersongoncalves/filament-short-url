@@ -1,13 +1,31 @@
 <?php
 
+use Filament\Support\Exceptions\Halt;
+use Illuminate\Database\Eloquent\Collection;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
+use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
 use JeffersonGoncalves\Filament\ShortUrl\Tests\Factories\UserFactory;
+use JeffersonGoncalves\LaravelShortUrl\Models\CustomDomain;
 use JeffersonGoncalves\LaravelShortUrl\Models\Folder;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 use JeffersonGoncalves\LaravelShortUrl\Models\Tag;
 
 use function Pest\Livewire\livewire;
+
+/**
+ * Regression coverage for the assign_custom_domain bulk action's mutation
+ * logic, without driving it through Filament's bulk-action-with-form modal
+ * cycle (a Filament v5 partial-render bug reproduces for any modal-form
+ * action — see the move_to_folder/apply_tags tests below).
+ *
+ * @param  array<string, mixed>  $data
+ */
+function assignCustomDomainToRecords(Collection $records, array $data): void
+{
+    $method = new ReflectionMethod(ShortUrlResource::class, 'assignCustomDomainToRecords');
+    $method->invoke(null, $records, $data);
+}
 
 beforeEach(function () {
     $this->admin = UserFactory::new()->create();
@@ -84,6 +102,56 @@ it('hides folder/tag filters and bulk actions when disabled on the plugin', func
         ->assertTableBulkActionHidden('apply_tags');
 
     FilamentShortUrlPlugin::get()->hideFolders(false)->hideTags(false);
+});
+
+it('shows the assign custom domain bulk action only when domains are enabled', function () {
+    config(['short-url.domains.enabled' => false]);
+
+    livewire(ListShortUrls::class)
+        ->assertTableBulkActionHidden('assign_custom_domain');
+
+    config(['short-url.domains.enabled' => true]);
+
+    livewire(ListShortUrls::class)
+        ->assertTableBulkActionExists('assign_custom_domain');
+});
+
+it('assigns a custom domain to short urls in bulk', function () {
+    $domain = CustomDomain::factory()->verified()->create();
+    $urls = ShortUrl::factory()->count(2)->create();
+
+    assignCustomDomainToRecords($urls, ['custom_domain_id' => $domain->id]);
+
+    expect($urls->fresh()->pluck('custom_domain_id')->unique()->all())->toBe([$domain->id]);
+});
+
+it('blocks bulk custom domain assignment when the short key already exists on the target domain', function () {
+    $domain = CustomDomain::factory()->verified()->create();
+    ShortUrl::factory()->create(['custom_domain_id' => $domain->id, 'url_key' => 'taken']);
+    $urls = ShortUrl::factory()->count(1)->create(['url_key' => 'taken']);
+
+    expect(fn () => assignCustomDomainToRecords($urls, ['custom_domain_id' => $domain->id]))
+        ->toThrow(Halt::class);
+
+    expect($urls->fresh()->first()->custom_domain_id)->toBe(0);
+});
+
+it('blocks bulk custom domain assignment when selected short urls share the same key', function () {
+    $domain = CustomDomain::factory()->verified()->create();
+    $otherDomain = CustomDomain::factory()->verified()->create();
+
+    // Both start on different domains (0 and $otherDomain) so the composite
+    // unique(custom_domain_id, url_key) index doesn't reject the seed data —
+    // the collision only appears once both target the same $domain.
+    $first = ShortUrl::factory()->create(['url_key' => 'shared-key']);
+    $second = ShortUrl::factory()->create(['url_key' => 'shared-key', 'custom_domain_id' => $otherDomain->id]);
+    $urls = ShortUrl::query()->whereKey([$first->id, $second->id])->get();
+
+    expect(fn () => assignCustomDomainToRecords($urls, ['custom_domain_id' => $domain->id]))
+        ->toThrow(Halt::class);
+
+    expect($first->fresh()->custom_domain_id)->toBe(0)
+        ->and($second->fresh()->custom_domain_id)->toBe($otherDomain->id);
 });
 
 it('filters the table by folder and archived status', function () {
