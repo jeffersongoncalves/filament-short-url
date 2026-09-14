@@ -15,7 +15,9 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
@@ -530,6 +532,19 @@ class ShortUrlResource extends Resource
                         ->visible(! $tagsHidden)
                         ->deselectRecordsAfterCompletion(),
 
+                    BulkAction::make('assign_custom_domain')
+                        ->label(__('filament-short-url::resources/short-url.bulk.assign_custom_domain'))
+                        ->icon('heroicon-o-globe-alt')
+                        ->form([
+                            Select::make('custom_domain_id')
+                                ->label(__('filament-short-url::resources/short-url.fields.custom_domain_id'))
+                                ->options(fn (): array => CustomDomain::query()->active()->pluck('domain', 'id')->all())
+                                ->searchable(),
+                        ])
+                        ->action(static::assignCustomDomainToRecords(...))
+                        ->visible(fn (): bool => (bool) config('short-url.domains.enabled'))
+                        ->deselectRecordsAfterCompletion(),
+
                     DeleteBulkAction::make(),
                 ]),
             ])
@@ -608,6 +623,46 @@ class ShortUrlResource extends Resource
         foreach ($records as $record) {
             $record->tags()->syncWithoutDetaching($data['tag_ids'] ?? []);
         }
+    }
+
+    /**
+     * custom_domain_id is part of a unique(custom_domain_id, url_key) index, so
+     * moving a batch of records onto the same domain can collide — either with
+     * each other, or with a link already on that domain — and a raw update()
+     * would surface that as a DB constraint failure instead of a clear error.
+     *
+     * @param  Collection<int, ShortUrl>  $records
+     * @param  array<string, mixed>  $data
+     */
+    protected static function assignCustomDomainToRecords(Collection $records, array $data): void
+    {
+        $customDomainId = (int) ($data['custom_domain_id'] ?? 0);
+
+        $duplicatesWithinSelection = $records->countBy('url_key')
+            ->filter(fn (int $count): bool => $count > 1)
+            ->keys();
+
+        $conflictsWithExistingLinks = ShortUrl::query()
+            ->where('custom_domain_id', $customDomainId)
+            ->whereIn('url_key', $records->pluck('url_key'))
+            ->whereNotIn('id', $records->pluck('id'))
+            ->pluck('url_key');
+
+        $conflictingKeys = $duplicatesWithinSelection->merge($conflictsWithExistingLinks)->unique();
+
+        if ($conflictingKeys->isNotEmpty()) {
+            Notification::make()
+                ->title(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_title'))
+                ->body(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_body', [
+                    'keys' => $conflictingKeys->implode(', '),
+                ]))
+                ->danger()
+                ->send();
+
+            throw new Halt;
+        }
+
+        $records->toQuery()->update(['custom_domain_id' => $customDomainId]);
     }
 
     /**
