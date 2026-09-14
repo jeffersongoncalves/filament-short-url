@@ -104,6 +104,9 @@ return [
         'unarchive' => 'Desarchivar',
         'move_to_folder' => 'Mover a Carpeta',
         'apply_tags' => 'Aplicar Etiquetas',
+        'assign_custom_domain' => 'Asignar Dominio Personalizado',
+        'assign_custom_domain_conflict_title' => 'Clave corta ya en uso en ese dominio',
+        'assign_custom_domain_conflict_body' => 'No se pudieron mover estos enlaces — la clave corta ya existe en el dominio de destino (o está duplicada dentro de la selección): :keys.',
     ],
     'actions' => [
         'statistics' => 'Estadísticas',
