@@ -31,6 +31,10 @@ class CustomDomainsTable
                     ->trueColor('success')
                     ->falseColor(fn (CustomDomain $record): string => $record->disabled_at ? 'danger' : 'warning'),
 
+                IconColumn::make('is_default')
+                    ->label(__('filament-short-url::resources/custom-domain.fields.is_default'))
+                    ->boolean(),
+
                 TextColumn::make('dns_record_type')
                     ->label(__('filament-short-url::resources/custom-domain.fields.dns_record_type'))
                     ->badge(),
@@ -76,6 +80,20 @@ class CustomDomainsTable
 
                         Notification::make()
                             ->title(__('filament-short-url::resources/custom-domain.actions.verify_queued'))
+                            ->success()
+                            ->send();
+                    }),
+
+                Action::make('set_default')
+                    ->label(__('filament-short-url::resources/custom-domain.actions.set_default'))
+                    ->icon('heroicon-o-star')
+                    ->color('gray')
+                    ->visible(fn (CustomDomain $record): bool => $record->is_verified && ! $record->disabled_at && ! $record->is_default)
+                    ->action(function (CustomDomain $record): void {
+                        $record->update(['is_default' => true]);
+
+                        Notification::make()
+                            ->title(__('filament-short-url::resources/custom-domain.actions.set_default_success', ['domain' => $record->domain]))
                             ->success()
                             ->send();
                     }),
