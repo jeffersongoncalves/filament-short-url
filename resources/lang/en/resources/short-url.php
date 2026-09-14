@@ -106,7 +106,7 @@ return [
         'apply_tags' => 'Apply Tags',
         'assign_custom_domain' => 'Assign Custom Domain',
         'assign_custom_domain_conflict_title' => 'Short key already in use on that domain',
-        'assign_custom_domain_conflict_body' => 'Cannot move these links — the short key already exists on the target domain (or is duplicated within the selection): :keys.',
+        'assign_custom_domain_conflict_body' => 'None of the selected links were moved — one or more of their short keys already exist on the target domain (or are duplicated within the selection).',
     ],
     'actions' => [
         'statistics' => 'Statistics',
