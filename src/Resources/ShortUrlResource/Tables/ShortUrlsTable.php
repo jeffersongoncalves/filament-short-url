@@ -25,6 +25,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\UniqueConstraintViolationException;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\FolderResource\Schemas\FolderForm;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource;
@@ -144,25 +145,25 @@ class ShortUrlsTable
                     BulkAction::make('enable')
                         ->label(__('filament-short-url::resources/short-url.bulk.enable'))
                         ->icon('heroicon-o-check-circle')
-                        ->action(fn (Collection $records) => $records->toQuery()->update(['is_enabled' => true]))
+                        ->action(fn (Builder $query) => $query->update(['is_enabled' => true]))
                         ->deselectRecordsAfterCompletion(),
 
                     BulkAction::make('disable')
                         ->label(__('filament-short-url::resources/short-url.bulk.disable'))
                         ->icon('heroicon-o-x-circle')
-                        ->action(fn (Collection $records) => $records->toQuery()->update(['is_enabled' => false]))
+                        ->action(fn (Builder $query) => $query->update(['is_enabled' => false]))
                         ->deselectRecordsAfterCompletion(),
 
                     BulkAction::make('archive')
                         ->label(__('filament-short-url::resources/short-url.bulk.archive'))
                         ->icon('heroicon-o-archive-box')
-                        ->action(fn (Collection $records) => $records->toQuery()->update(['archived_at' => now()]))
+                        ->action(fn (Builder $query) => $query->update(['archived_at' => now()]))
                         ->deselectRecordsAfterCompletion(),
 
                     BulkAction::make('unarchive')
                         ->label(__('filament-short-url::resources/short-url.bulk.unarchive'))
                         ->icon('heroicon-o-archive-box-x-mark')
-                        ->action(fn (Collection $records) => $records->toQuery()->update(['archived_at' => null]))
+                        ->action(fn (Builder $query) => $query->update(['archived_at' => null]))
                         ->deselectRecordsAfterCompletion(),
 
                     BulkAction::make('move_to_folder')
@@ -176,7 +177,7 @@ class ShortUrlsTable
                                 ->createOptionForm(FolderForm::fields())
                                 ->createOptionUsing(fn (array $data): int => (int) Folder::query()->create($data)->getKey()),
                         ])
-                        ->action(fn (Collection $records, array $data) => $records->toQuery()->update(['folder_id' => $data['folder_id']]))
+                        ->action(fn (Builder $query, array $data) => $query->update(['folder_id' => $data['folder_id']]))
                         ->visible(! $foldersHidden)
                         ->deselectRecordsAfterCompletion(),
 
@@ -288,43 +289,38 @@ class ShortUrlsTable
     }
 
     /**
+     * $query is the selection scoped as a Builder (not a hydrated Collection) —
+     * required here specifically, unlike the other flat-column bulk actions
+     * above: with "select all" ticked on a table with 100k+ rows, Filament
+     * would otherwise hydrate every matching row into a full ShortUrl model
+     * before this closure even runs, which alone exhausts a typical PHP-FPM
+     * memory_limit (see #37).
+     *
      * custom_domain_id is part of a unique(custom_domain_id, url_key) index, so
      * moving a batch of records onto the same domain can collide — either with
-     * each other, or with a link already on that domain — and a raw update()
-     * would surface that as a DB constraint failure instead of a clear error.
+     * each other, or with a link already on that domain. Rather than a PHP-side
+     * pre-check (which would itself need to load every selected url_key), let
+     * the database enforce it: a colliding UPDATE fails atomically — no rows
+     * change — and Laravel surfaces that as UniqueConstraintViolationException.
      *
-     * @param  Collection<int, ShortUrl>  $records
+     * @param  Builder<ShortUrl>  $query
      * @param  array<string, mixed>  $data
      */
-    protected static function assignCustomDomainToRecords(Collection $records, array $data): void
+    protected static function assignCustomDomainToRecords(Builder $query, array $data): void
     {
         $customDomainId = (int) ($data['custom_domain_id'] ?? 0);
 
-        $duplicatesWithinSelection = $records->countBy('url_key')
-            ->filter(fn (int $count): bool => $count > 1)
-            ->keys();
-
-        $conflictsWithExistingLinks = ShortUrl::query()
-            ->where('custom_domain_id', $customDomainId)
-            ->whereIn('url_key', $records->pluck('url_key'))
-            ->whereNotIn('id', $records->pluck('id'))
-            ->pluck('url_key');
-
-        $conflictingKeys = $duplicatesWithinSelection->merge($conflictsWithExistingLinks)->unique();
-
-        if ($conflictingKeys->isNotEmpty()) {
+        try {
+            $query->update(['custom_domain_id' => $customDomainId]);
+        } catch (UniqueConstraintViolationException) {
             Notification::make()
                 ->title(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_title'))
-                ->body(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_body', [
-                    'keys' => $conflictingKeys->implode(', '),
-                ]))
+                ->body(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_body'))
                 ->danger()
                 ->send();
 
             throw new Halt;
         }
-
-        $records->toQuery()->update(['custom_domain_id' => $customDomainId]);
     }
 
     /**

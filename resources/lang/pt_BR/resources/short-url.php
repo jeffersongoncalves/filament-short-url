@@ -106,7 +106,7 @@ return [
         'apply_tags' => 'Aplicar Tags',
         'assign_custom_domain' => 'Atribuir Domínio Personalizado',
         'assign_custom_domain_conflict_title' => 'Chave curta já em uso nesse domínio',
-        'assign_custom_domain_conflict_body' => 'Não foi possível mover esses links — a chave curta já existe no domínio de destino (ou está duplicada dentro da seleção): :keys.',
+        'assign_custom_domain_conflict_body' => 'Nenhum dos links selecionados foi movido — uma ou mais chaves curtas já existem no domínio de destino (ou estão duplicadas dentro da seleção).',
     ],
     'actions' => [
         'statistics' => 'Estatísticas',
