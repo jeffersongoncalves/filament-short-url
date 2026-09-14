@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/2.5.10...HEAD)
+## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/2.6.0...HEAD)
 
 ### Added
 
 - `ShortUrlResource` (Filament v5) for `jeffersongoncalves/laravel-short-url`: list, create and edit pages covering the F1 field set.
 - `FilamentShortUrlPlugin` with resource override and navigation group configuration.
+
+## [2.6.0](https://github.com/jeffersongoncalves/filament-short-url/compare/2.5.10...2.6.0) - 2026-09-14
+
+Add a Custom Domain field to the short URL form, scoped to active (verified, enabled) domains and shown only when short-url.domains.enabled is true (#21).
 
 ## [2.5.10](https://github.com/jeffersongoncalves/filament-short-url/compare/2.5.9...2.5.10) - 2026-09-14
 
