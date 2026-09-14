@@ -17,14 +17,16 @@ use function Pest\Livewire\livewire;
  * Regression coverage for the assign_custom_domain bulk action's mutation
  * logic, without driving it through Filament's bulk-action-with-form modal
  * cycle (a Filament v5 partial-render bug reproduces for any modal-form
- * action — see the move_to_folder/apply_tags tests below).
+ * action — see the move_to_folder/apply_tags tests below). The real action
+ * receives a Builder scoped to the selection (not a hydrated Collection —
+ * see #37), so wrap $records back into that shape here.
  *
  * @param  array<string, mixed>  $data
  */
 function assignCustomDomainToRecords(Collection $records, array $data): void
 {
     $method = new ReflectionMethod(ShortUrlsTable::class, 'assignCustomDomainToRecords');
-    $method->invoke(null, $records, $data);
+    $method->invoke(null, $records->toQuery(), $data);
 }
 
 beforeEach(function () {

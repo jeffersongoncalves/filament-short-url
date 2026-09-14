@@ -106,7 +106,7 @@ return [
         'apply_tags' => 'Aplicar Etiquetas',
         'assign_custom_domain' => 'Asignar Dominio Personalizado',
         'assign_custom_domain_conflict_title' => 'Clave corta ya en uso en ese dominio',
-        'assign_custom_domain_conflict_body' => 'No se pudieron mover estos enlaces — la clave corta ya existe en el dominio de destino (o está duplicada dentro de la selección): :keys.',
+        'assign_custom_domain_conflict_body' => 'No se movió ninguno de los enlaces seleccionados — una o más claves cortas ya existen en el dominio de destino (o están duplicadas dentro de la selección).',
     ],
     'actions' => [
         'statistics' => 'Estadísticas',
