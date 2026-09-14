@@ -23,6 +23,7 @@ return [
         'host' => 'Host',
         'value' => 'Valor',
         'click_to_copy' => 'Clic para copiar',
+        'copied' => '¡Copiado!',
         'registrar_hint_cloudflare' => 'DNS > Records > Add record. Deje el proxy en "DNS only" durante la verificación.',
         'registrar_hint_godaddy' => 'My Products > DNS > Add New Record.',
         'registrar_hint_registrobr' => 'Painel de Controle > DNS > Editar Zona > adicionar registro.',
