@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\Filament\ShortUrl;
 
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
+use JeffersonGoncalves\LaravelShortUrl\Models\CustomDomain;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -28,5 +29,20 @@ class FilamentShortUrlServiceProvider extends PackageServiceProvider
             ],
             'jeffersongoncalves/filament-short-url'
         );
+
+        // Only one domain may be default per tenant. Enforced here (not just in
+        // the panel form) so it also holds for programmatic creation/updates —
+        // a mass update() on the query builder, so it doesn't re-trigger this
+        // same "saved" event.
+        CustomDomain::saved(function (CustomDomain $domain): void {
+            if (! $domain->is_default) {
+                return;
+            }
+
+            CustomDomain::query()
+                ->whereKeyNot($domain->getKey())
+                ->where('is_default', true)
+                ->update(['is_default' => false]);
+        });
     }
 }
