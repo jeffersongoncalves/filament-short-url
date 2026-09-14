@@ -5,6 +5,8 @@ return [
         'domain' => 'Domínio',
         'is_wildcard' => 'Curinga',
         'is_wildcard_helper' => 'Também corresponde a qualquer subdomínio deste domínio.',
+        'is_default' => 'Padrão',
+        'is_default_helper' => 'Novos links curtos usam este domínio quando nenhum é escolhido explicitamente. Apenas um domínio pode ser padrão; ativar isto remove o padrão de qualquer outro domínio. Precisa estar verificado primeiro.',
         'root_redirect_url' => 'URL de Redirecionamento Raiz',
         'status' => 'Verificado',
         'dns_record_type' => 'Registro DNS',
@@ -14,6 +16,8 @@ return [
         'dns_instructions' => 'Instruções de DNS',
         'verify_now' => 'Verificar Agora',
         'verify_queued' => 'Verificação enfileirada.',
+        'set_default' => 'Definir como Padrão',
+        'set_default_success' => ':domain agora é o domínio padrão para novos links curtos.',
         'close' => 'Fechar',
     ],
     'dns' => [
