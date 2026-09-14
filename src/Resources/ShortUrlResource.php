@@ -36,6 +36,8 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
 use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
@@ -480,25 +482,29 @@ class ShortUrlResource extends Resource
                     BulkAction::make('enable')
                         ->label(__('filament-short-url::resources/short-url.bulk.enable'))
                         ->icon('heroicon-o-check-circle')
-                        ->action(fn (Collection $records) => $records->toQuery()->update(['is_enabled' => true]))
+                        ->fetchSelectedRecords(false)
+                        ->action(fn (SupportCollection $ids) => ShortUrl::query()->whereIn('id', $ids)->update(['is_enabled' => true]))
                         ->deselectRecordsAfterCompletion(),
 
                     BulkAction::make('disable')
                         ->label(__('filament-short-url::resources/short-url.bulk.disable'))
                         ->icon('heroicon-o-x-circle')
-                        ->action(fn (Collection $records) => $records->toQuery()->update(['is_enabled' => false]))
+                        ->fetchSelectedRecords(false)
+                        ->action(fn (SupportCollection $ids) => ShortUrl::query()->whereIn('id', $ids)->update(['is_enabled' => false]))
                         ->deselectRecordsAfterCompletion(),
 
                     BulkAction::make('archive')
                         ->label(__('filament-short-url::resources/short-url.bulk.archive'))
                         ->icon('heroicon-o-archive-box')
-                        ->action(fn (Collection $records) => $records->toQuery()->update(['archived_at' => now()]))
+                        ->fetchSelectedRecords(false)
+                        ->action(fn (SupportCollection $ids) => ShortUrl::query()->whereIn('id', $ids)->update(['archived_at' => now()]))
                         ->deselectRecordsAfterCompletion(),
 
                     BulkAction::make('unarchive')
                         ->label(__('filament-short-url::resources/short-url.bulk.unarchive'))
                         ->icon('heroicon-o-archive-box-x-mark')
-                        ->action(fn (Collection $records) => $records->toQuery()->update(['archived_at' => null]))
+                        ->fetchSelectedRecords(false)
+                        ->action(fn (SupportCollection $ids) => ShortUrl::query()->whereIn('id', $ids)->update(['archived_at' => null]))
                         ->deselectRecordsAfterCompletion(),
 
                     BulkAction::make('move_to_folder')
@@ -512,7 +518,8 @@ class ShortUrlResource extends Resource
                                 ->createOptionForm(FolderResource::fields())
                                 ->createOptionUsing(fn (array $data): int => (int) Folder::query()->create($data)->getKey()),
                         ])
-                        ->action(fn (Collection $records, array $data) => $records->toQuery()->update(['folder_id' => $data['folder_id']]))
+                        ->fetchSelectedRecords(false)
+                        ->action(fn (SupportCollection $ids, array $data) => ShortUrl::query()->whereIn('id', $ids)->update(['folder_id' => $data['folder_id']]))
                         ->visible(! $foldersHidden)
                         ->deselectRecordsAfterCompletion(),
 
@@ -541,6 +548,7 @@ class ShortUrlResource extends Resource
                                 ->options(fn (): array => CustomDomain::query()->active()->pluck('domain', 'id')->all())
                                 ->searchable(),
                         ])
+                        ->fetchSelectedRecords(false)
                         ->action(static::assignCustomDomainToRecords(...))
                         ->visible(fn (): bool => (bool) config('short-url.domains.enabled'))
                         ->deselectRecordsAfterCompletion(),
@@ -626,43 +634,40 @@ class ShortUrlResource extends Resource
     }
 
     /**
+     * $ids is a plain collection of selected ids (fetchSelectedRecords(false)
+     * above), not hydrated ShortUrl models: with "select all" ticked on a
+     * table with 100k+ rows, Filament would otherwise hydrate every matching
+     * row into a full ShortUrl model before this closure even runs, which
+     * alone exhausts a typical PHP-FPM memory_limit (see #37). Filament v3
+     * has no query-based selected-records API (unlike v4/v5), so the
+     * selection is still resolved as a flat id list under the hood — this at
+     * least avoids the model-hydration half of the problem.
+     *
      * custom_domain_id is part of a unique(custom_domain_id, url_key) index, so
      * moving a batch of records onto the same domain can collide — either with
-     * each other, or with a link already on that domain — and a raw update()
-     * would surface that as a DB constraint failure instead of a clear error.
+     * each other, or with a link already on that domain. Rather than a PHP-side
+     * pre-check (which would itself need to load every selected url_key), let
+     * the database enforce it: a colliding UPDATE fails atomically — no rows
+     * change — and Laravel surfaces that as UniqueConstraintViolationException.
      *
-     * @param  Collection<int, ShortUrl>  $records
+     * @param  SupportCollection<int, int|string>  $ids
      * @param  array<string, mixed>  $data
      */
-    protected static function assignCustomDomainToRecords(Collection $records, array $data): void
+    protected static function assignCustomDomainToRecords(SupportCollection $ids, array $data): void
     {
         $customDomainId = (int) ($data['custom_domain_id'] ?? 0);
 
-        $duplicatesWithinSelection = $records->countBy('url_key')
-            ->filter(fn (int $count): bool => $count > 1)
-            ->keys();
-
-        $conflictsWithExistingLinks = ShortUrl::query()
-            ->where('custom_domain_id', $customDomainId)
-            ->whereIn('url_key', $records->pluck('url_key'))
-            ->whereNotIn('id', $records->pluck('id'))
-            ->pluck('url_key');
-
-        $conflictingKeys = $duplicatesWithinSelection->merge($conflictsWithExistingLinks)->unique();
-
-        if ($conflictingKeys->isNotEmpty()) {
+        try {
+            ShortUrl::query()->whereIn('id', $ids)->update(['custom_domain_id' => $customDomainId]);
+        } catch (UniqueConstraintViolationException) {
             Notification::make()
                 ->title(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_title'))
-                ->body(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_body', [
-                    'keys' => $conflictingKeys->implode(', '),
-                ]))
+                ->body(__('filament-short-url::resources/short-url.bulk.assign_custom_domain_conflict_body'))
                 ->danger()
                 ->send();
 
             throw new Halt;
         }
-
-        $records->toQuery()->update(['custom_domain_id' => $customDomainId]);
     }
 
     /**
