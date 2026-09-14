@@ -19,6 +19,7 @@ return [
         'url_key' => 'Short Key',
         'url_key_helper' => 'Leave empty to auto-generate a unique key.',
         'url_key_locked_helper' => 'Cannot be changed after creation — changing it would break every link already shared or printed.',
+        'custom_domain_id' => 'Custom Domain',
         'title' => 'Title',
         'notes' => 'Notes',
         'is_enabled' => 'Enabled',
