@@ -34,6 +34,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
 use JeffersonGoncalves\Filament\ShortUrl\Concerns\HasPluginNavigationGroup;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlPlugin;
@@ -44,6 +45,7 @@ use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Create
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\EditShortUrl;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Statistics;
+use JeffersonGoncalves\LaravelShortUrl\Models\CustomDomain;
 use JeffersonGoncalves\LaravelShortUrl\Models\Folder;
 use JeffersonGoncalves\LaravelShortUrl\Models\Pixel;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
@@ -151,6 +153,22 @@ class ShortUrlResource extends Resource
                     ignoreRecord: true,
                     modifyRuleUsing: fn (Unique $rule): Unique => $rule->whereNull('custom_domain_id'),
                 ),
+
+            Select::make('custom_domain_id')
+                ->label(__('filament-short-url::resources/short-url.fields.custom_domain_id'))
+                ->options(fn (): array => CustomDomain::query()->active()->pluck('domain', 'id')->all())
+                ->searchable()
+                ->preload()
+                ->native(false)
+                // custom_domain_id is NOT NULL with sentinel 0 for "no domain" — normalize
+                // it to null so the field reads as unselected instead of an invalid option.
+                ->afterStateHydrated(fn (Select $component, $state) => $component->state($state ?: null))
+                ->exists(
+                    table: (new CustomDomain)->getTable(),
+                    column: 'id',
+                    modifyRuleUsing: fn (Exists $rule): Exists => $rule->where('is_verified', true)->whereNull('disabled_at'),
+                )
+                ->visible(fn (): bool => (bool) config('short-url.domains.enabled')),
 
             TextInput::make('title')
                 ->label(__('filament-short-url::resources/short-url.fields.title'))

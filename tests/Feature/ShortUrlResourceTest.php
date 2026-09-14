@@ -6,6 +6,7 @@ use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\Create
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\EditShortUrl;
 use JeffersonGoncalves\Filament\ShortUrl\Resources\ShortUrlResource\Pages\ListShortUrls;
 use JeffersonGoncalves\Filament\ShortUrl\Tests\Factories\UserFactory;
+use JeffersonGoncalves\LaravelShortUrl\Models\CustomDomain;
 use JeffersonGoncalves\LaravelShortUrl\Models\ShortUrl;
 
 use function Pest\Livewire\livewire;
@@ -133,6 +134,57 @@ it('hides rule/split targeting when disabled on the plugin', function () {
         ->assertFormFieldDoesNotExist('destination_type');
 
     FilamentShortUrlPlugin::get()->hideTargeting(false);
+});
+
+it('hides the custom domain field when domains are disabled', function () {
+    config(['short-url.domains.enabled' => false]);
+
+    livewire(CreateShortUrl::class)
+        ->assertSuccessful()
+        ->assertFormFieldDoesNotExist('custom_domain_id');
+});
+
+it('only offers active custom domains for assignment', function () {
+    $active = CustomDomain::factory()->verified()->create();
+    CustomDomain::factory()->create(); // unverified — must not be selectable
+    CustomDomain::factory()->verified()->create(['disabled_at' => now()]); // disabled — must not be selectable
+
+    livewire(CreateShortUrl::class)
+        ->fillForm([
+            'destination_url' => 'https://example.com/target',
+            'custom_domain_id' => $active->id,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $shortUrl = ShortUrl::query()->where('destination_url', 'https://example.com/target')->firstOrFail();
+
+    expect($shortUrl->custom_domain_id)->toBe($active->id);
+});
+
+it('rejects assigning an unverified custom domain', function () {
+    $unverified = CustomDomain::factory()->create();
+
+    livewire(CreateShortUrl::class)
+        ->fillForm([
+            'destination_url' => 'https://example.com/target',
+            'custom_domain_id' => $unverified->id,
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['custom_domain_id']);
+});
+
+it('can clear a custom domain from a short url on edit', function () {
+    $domain = CustomDomain::factory()->verified()->create();
+    $shortUrl = ShortUrl::factory()->create(['custom_domain_id' => $domain->id]);
+
+    livewire(EditShortUrl::class, ['record' => $shortUrl->getRouteKey()])
+        ->assertFormSet(['custom_domain_id' => $domain->id])
+        ->fillForm(['custom_domain_id' => null])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($shortUrl->fresh()->custom_domain_id)->toBe(0);
 });
 
 it('filters the table by enabled status', function () {
