@@ -5,6 +5,8 @@ return [
         'domain' => 'Dominio',
         'is_wildcard' => 'Comodín',
         'is_wildcard_helper' => 'También coincide con cualquier subdominio de este dominio.',
+        'is_default' => 'Predeterminado',
+        'is_default_helper' => 'Los nuevos enlaces cortos usan este dominio cuando no se elige ninguno explícitamente. Solo un dominio puede ser predeterminado; activar esto lo quita de cualquier otro dominio. Debe estar verificado primero.',
         'root_redirect_url' => 'URL de Redirección Raíz',
         'status' => 'Verificado',
         'dns_record_type' => 'Registro DNS',
@@ -14,6 +16,8 @@ return [
         'dns_instructions' => 'Instrucciones de DNS',
         'verify_now' => 'Verificar Ahora',
         'verify_queued' => 'Verificación en cola.',
+        'set_default' => 'Establecer como Predeterminado',
+        'set_default_success' => ':domain ahora es el dominio predeterminado para nuevos enlaces cortos.',
         'close' => 'Cerrar',
     ],
     'dns' => [
