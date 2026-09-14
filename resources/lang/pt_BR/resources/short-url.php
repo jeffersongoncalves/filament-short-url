@@ -19,6 +19,7 @@ return [
         'url_key' => 'Chave Curta',
         'url_key_helper' => 'Deixe em branco para gerar uma chave única automaticamente.',
         'url_key_locked_helper' => 'Não pode ser alterada depois de criada — mudar quebraria todo link já compartilhado ou impresso.',
+        'custom_domain_id' => 'Domínio Personalizado',
         'title' => 'Título',
         'notes' => 'Notas',
         'is_enabled' => 'Ativado',
