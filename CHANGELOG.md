@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/1.7.0...HEAD)
+## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/1.8.0...HEAD)
 
 ### Added
 
 - `ShortUrlResource` (Filament v5) for `jeffersongoncalves/laravel-short-url`: list, create and edit pages covering the F1 field set.
 - `FilamentShortUrlPlugin` with resource override and navigation group configuration.
+
+## [1.8.0](https://github.com/jeffersongoncalves/filament-short-url/compare/1.7.0...1.8.0) - 2026-09-14
+
+Mark a custom domain default in the panel (is_default toggle, set_default table action, single-default-per-tenant invariant). Requires jeffersongoncalves/laravel-short-url ^5.2 (#33).
 
 ## [1.7.0](https://github.com/jeffersongoncalves/filament-short-url/compare/1.6.0...1.7.0) - 2026-09-14
 
