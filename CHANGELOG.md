@@ -5,13 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/3.8.1...HEAD)
-
-### Added
-
-- `ShortUrlResource` (Filament v5) for `jeffersongoncalves/laravel-short-url`: list, create and edit pages covering the F1 field set.
-- `FilamentShortUrlPlugin` with resource override and navigation group configuration.
-
 ## [3.8.1](https://github.com/jeffersongoncalves/filament-short-url/compare/3.8.0...3.8.1) - 2026-09-14
 
 Fix assign_custom_domain (and enable/disable/archive/unarchive/move_to_folder) hydrating every selected row into a full model on select-all, which OOMs past ~50-100k rows. Closures now type Builder $query so Filament resolves the selection as a query, not a hydrated Collection (#37).
