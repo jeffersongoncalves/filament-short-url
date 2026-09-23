@@ -40,8 +40,17 @@ class SettingsPage extends Page
         $repository = app(SettingsRepository::class);
 
         foreach ($repository->schema() as $key => $definition) {
-            Arr::set($this->data, $key, $repository->get($key, $definition['default']));
+            Arr::set($this->data, $key, $repository->get($key, $this->configValue($key, $definition)));
         }
+    }
+
+    /**
+     * The value in effect when no settings row exists: config/.env first,
+     * the schema literal only as a last resort.
+     */
+    protected function configValue(string $key, array $definition): mixed
+    {
+        return config("short-url.{$key}", $definition['default']);
     }
 
     public static function canAccess(): bool
@@ -106,20 +115,27 @@ class SettingsPage extends Page
     protected function buildField(array $definition): Component
     {
         $key = $definition['key'];
-        $rules = $definition['rules'] ?? [];
 
-        return match ($definition['type']) {
-            'boolean' => Toggle::make($key)
-                ->label($definition['label'])
-                ->rules($rules),
-            'integer' => TextInput::make($key)
-                ->label($definition['label'])
-                ->numeric()
-                ->rules($rules),
-            default => TextInput::make($key)
-                ->label($definition['label'])
-                ->rules($rules),
+        $field = match ($definition['type']) {
+            'boolean' => Toggle::make($key),
+            'integer' => TextInput::make($key)->numeric(),
+            default => TextInput::make($key),
         };
+
+        $default = $this->configValue($key, $definition);
+
+        $helper = __('filament-short-url::resources/settings.config_default', [
+            'value' => is_bool($default) ? var_export($default, true) : (string) $default,
+        ]);
+
+        if ($key === 'redirect.default_status_code') {
+            $helper .= ' '.__('filament-short-url::resources/settings.status_code_new_links_only');
+        }
+
+        return $field
+            ->label($definition['label'])
+            ->helperText($helper)
+            ->rules($definition['rules'] ?? []);
     }
 
     public function save(): void
@@ -128,7 +144,16 @@ class SettingsPage extends Page
         $repository = app(SettingsRepository::class);
 
         foreach ($repository->schema() as $key => $definition) {
-            $repository->set($key, $flat[$key] ?? $definition['default']);
+            $default = $this->configValue($key, $definition);
+            $value = $flat[$key] ?? $default;
+
+            // Only diverging values are stored; matching config drops the row
+            // so later config/.env changes are not shadowed by the table.
+            if ($value == $default) {
+                $repository->forget($key);
+            } else {
+                $repository->set($key, $value);
+            }
         }
 
         Notification::make()
