@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/2.9.0...2.x)
+## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/2.9.1...2.x)
 
 ### Added
 
 - `ShortUrlResource` (Filament v5) for `jeffersongoncalves/laravel-short-url`: list, create and edit pages covering the F1 field set.
 - `FilamentShortUrlPlugin` with resource override and navigation group configuration.
+
+## [2.9.1](https://github.com/jeffersongoncalves/filament-short-url/compare/2.9.0...2.9.1) - 2026-09-23
+
+Settings page shows the effective value (config/.env when no row is stored) instead of hard-coded defaults, and saving only stores values that differ from config. Setting a field back to the config value removes the stored row. Fields show their config default, and the status code field notes that it only affects new links. Translations for all locales (#58, #56).
 
 ## [2.9.0](https://github.com/jeffersongoncalves/filament-short-url/compare/2.8.1...2.9.0) - 2026-09-23
 
