@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.0](https://github.com/jeffersongoncalves/filament-short-url/compare/3.8.1...3.9.0) - 2026-09-23
+
+### What's new
+
+- **Translations:** 16 new locales (ar, az, de, fa, fr, hi, it, ja, nl, pl, pt, ru, tr, uk, uz, zh_CN). (#52)
+
+Thanks to @Elvin-Qulizade (Elvin Qulizada) for the i18n initiative behind these translations — first contributed in jeffersongoncalves/filament-scanner-guard#2 and now rolled out across the Filament plugins. He is credited as co-author.
+
+### What's Changed
+
+* ci: standardize update-changelog workflow (3.x) by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-short-url/pull/43
+* ci: standardize tests workflow (3.x) by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-short-url/pull/47
+* ci: standardize dependabot config by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-short-url/pull/44
+* feat(i18n): add translations (3.x) by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-short-url/pull/52
+
+**Full Changelog**: https://github.com/jeffersongoncalves/filament-short-url/compare/3.8.1...3.9.0
+
 ## [3.8.1](https://github.com/jeffersongoncalves/filament-short-url/compare/3.8.0...3.8.1) - 2026-09-14
 
 Fix assign_custom_domain (and enable/disable/archive/unarchive/move_to_folder) hydrating every selected row into a full model on select-all, which OOMs past ~50-100k rows. Closures now type Builder $query so Filament resolves the selection as a query, not a hydrated Collection (#37).
