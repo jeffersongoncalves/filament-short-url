@@ -19,3 +19,4 @@
 *.php diff=php
 
 CHANGELOG.md export-ignore
+testbench.yaml export-ignore
