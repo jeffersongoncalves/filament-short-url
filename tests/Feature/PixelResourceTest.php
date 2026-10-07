@@ -47,6 +47,15 @@ it('loads existing config back into the provider fields on edit', function () {
         ->assertFormSet(['config_field_0' => '999']);
 });
 
+it('renders the snippet preview of the test table action escaped', function () {
+    $script = app(PixelProviderRegistry::class)->get('meta_pixel')->render(['pixel_id' => '999']);
+
+    $html = view('filament-short-url::components.payload-preview', ['payload' => ['script' => $script]])->render();
+
+    expect($html)->toContain(e($script))
+        ->not->toContain('<script');
+});
+
 it('registers a fake pixel provider and shows it in the pixel resource', function () {
     app(PixelProviderRegistry::class)->register(
         new PixelProvider(
