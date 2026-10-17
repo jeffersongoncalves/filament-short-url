@@ -19,12 +19,15 @@ use Illuminate\Support\ViewErrorBag;
 use JeffersonGoncalves\Filament\ShortUrl\FilamentShortUrlServiceProvider;
 use JeffersonGoncalves\Filament\ShortUrl\Tests\Panel\AdminPanelProvider;
 use JeffersonGoncalves\LaravelShortUrl\LaravelShortUrlServiceProvider;
+use JeffersonGoncalves\PestPluginDatabaseMigrations\LoadsPackageMigrations;
 use Livewire\LivewireServiceProvider;
 use Livewire\Mechanisms\DataStore;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
+    use LoadsPackageMigrations;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -97,27 +100,6 @@ abstract class TestCase extends Orchestra
     protected function defineDatabaseMigrations(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
-
-        $stubsPath = __DIR__.'/../vendor/jeffersongoncalves/laravel-short-url/database/migrations';
-        $tempPath = sys_get_temp_dir().'/filament-short-url-migrations';
-
-        // Clear stale copies first — this dir persists across local test runs,
-        // so a renamed/removed upstream stub would otherwise leave its old
-        // copy sitting here forever, silently reintroducing whatever bug the
-        // rename fixed (see laravel-short-url's migration filename ordering
-        // fix, filament-short-url#18).
-        foreach (glob($tempPath.'/*.php') as $stale) {
-            unlink($stale);
-        }
-
-        if (! is_dir($tempPath)) {
-            mkdir($tempPath, 0755, true);
-        }
-
-        foreach (glob($stubsPath.'/*.php.stub') as $stub) {
-            copy($stub, $tempPath.'/'.basename(str_replace('.php.stub', '.php', $stub)));
-        }
-
-        $this->loadMigrationsFrom($tempPath);
+        $this->loadPackageMigrations(LaravelShortUrlServiceProvider::class);
     }
 }
