@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\Filament\ShortUrl;
 
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
+use JeffersonGoncalves\Filament\ShortUrl\Support\StatsPayloadMemo;
 use JeffersonGoncalves\LaravelShortUrl\Models\CustomDomain;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -19,6 +20,11 @@ class FilamentShortUrlServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasTranslations();
+    }
+
+    public function packageRegistered(): void
+    {
+        $this->app->scoped(StatsPayloadMemo::class);
     }
 
     public function packageBooted(): void
