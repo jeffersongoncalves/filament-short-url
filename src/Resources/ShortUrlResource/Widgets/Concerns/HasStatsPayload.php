@@ -31,7 +31,7 @@ trait HasStatsPayload
     {
         $key = 'short-url:'.($this->record?->getKey() ?? 'null').':'.$this->from.':'.$this->to;
 
-        return StatsPayloadMemo::remember($key, fn () => app(StatsAggregator::class)
+        return app(StatsPayloadMemo::class)->remember($key, fn () => app(StatsAggregator::class)
             ->for($this->record)
             ->between(
                 $this->from ? Carbon::parse($this->from)->startOfDay() : now()->subDays(30)->startOfDay(),
