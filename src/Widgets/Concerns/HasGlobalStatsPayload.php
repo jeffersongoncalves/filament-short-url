@@ -6,6 +6,7 @@ use Illuminate\Support\Carbon;
 use JeffersonGoncalves\Filament\ShortUrl\Support\StatsPayloadMemo;
 use JeffersonGoncalves\LaravelShortUrl\Contracts\StatsAggregator;
 use JeffersonGoncalves\LaravelShortUrl\Data\StatsPayload;
+use JeffersonGoncalves\LaravelShortUrl\Tenancy\TenantContext;
 
 /**
  * Aggregates across every short url site-wide, via the core's
@@ -20,9 +21,9 @@ trait HasGlobalStatsPayload
 
     protected function getGlobalPayload(): StatsPayload
     {
-        $key = 'global:'.Carbon::now()->toDateString();
+        $key = 'global:'.(app(TenantContext::class)->currentId() ?? 'null').':'.Carbon::now()->toDateString();
 
-        return StatsPayloadMemo::remember($key, fn () => app(StatsAggregator::class)
+        return app(StatsPayloadMemo::class)->remember($key, fn () => app(StatsAggregator::class)
             ->forShortUrls(null)
             ->between(
                 Carbon::now()->subDays(30)->startOfDay(),
