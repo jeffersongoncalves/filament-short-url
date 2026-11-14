@@ -5,12 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/2.9.3...2.x)
+## [Unreleased](https://github.com/jeffersongoncalves/filament-short-url/compare/2.10.0...2.x)
 
 ### Added
 
 - `ShortUrlResource` (Filament v5) for `jeffersongoncalves/laravel-short-url`: list, create and edit pages covering the F1 field set.
 - `FilamentShortUrlPlugin` with resource override and navigation group configuration.
+
+## [2.10.0](https://github.com/jeffersongoncalves/filament-short-url/compare/2.9.3...2.10.0) - 2026-11-13
+
+### Fixed
+
+- Metrics widgets no longer serve stale or cross-tenant data on persistent workers (Laravel Octane). `StatsPayloadMemo` is now a request-scoped container binding instead of a process-static cache, and the global stats key includes the current tenant id (#95).
+
+### Changed
+
+- Requires `jeffersongoncalves/laravel-short-url` ^5.3. With tenancy enabled and a current tenant, `StatsAggregator::forShortUrls(null)` now aggregates only that tenant's links, so the global Metrics widgets are tenant-scoped. With tenancy disabled, behavior is unchanged.
 
 ## [2.9.3](https://github.com/jeffersongoncalves/filament-short-url/compare/2.9.2...2.9.3) - 2026-11-13
 
